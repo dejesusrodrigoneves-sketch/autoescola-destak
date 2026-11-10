@@ -1,6 +1,6 @@
 # SPEC — Site da Autoescola Destak
 
-**Versão 0.3.3 · 2026-11-10**
+**Versão 0.3.4 · 2026-11-10**
 
 ---
 
@@ -9,7 +9,7 @@
 | Campo | Valor |
 |---|---|
 | Projeto | Site e painel da Autoescola Destak |
-| Versão | 0.3.3 |
+| Versão | 0.3.4 |
 | Data | 2026-11-10 |
 | Status | Aprovada para planejamento; restam Q-17 e Q-25 |
 | Autor | [A DEFINIR] |
@@ -21,8 +21,8 @@
 
 | Camada | Tecnologia | Versão | Para que serve | Onde roda |
 |---|---|---|---|---|
-| Frontend | React + TypeScript | React 19, TS 5 | interface pública, aluno, instrutor e admin | Cloudflare Pages |
-| Build do frontend | Vite | 6 | desenvolvimento e build | máquina local e Cloudflare Pages |
+| Frontend | React + TypeScript | React 19, TS 5 | interface pública, aluno, instrutor e admin | Cloudflare Workers (static assets) |
+| Build do frontend | Vite | 6 | desenvolvimento e build | máquina local e Cloudflare Workers |
 | Estilo | Tailwind CSS | 4 | tokens e utilitários | build do frontend |
 | Componentes | shadcn/ui | conforme CLI | base de UI acessível | build do frontend |
 | Rotas | React Router | 7 | navegação e pré-renderização | build do frontend |
@@ -33,7 +33,7 @@
 | Cache e filas | Redis | 7 | filas, limite de requisições, cache opcional | **Railway** (Q-13) |
 | Notificações | Evolution API | versão fixada no repositório | envio de WhatsApp | **Railway, em container próprio, modo QR Code** (Q-12, Q-13) |
 | Pagamentos | Asaas | API v3 | cobrança, Pix, boleto, cartão | nuvem do Asaas |
-| Hospedagem do site | Cloudflare Pages | — | arquivos estáticos e funções | Cloudflare |
+| Hospedagem do site | Cloudflare Workers com static assets | — | servir o bundle estático do site | Cloudflare |
 
 **Ambiente local de desenvolvimento.** A expressão "vite e backend (para localhost)" da versão anterior significava: o frontend roda com o servidor de desenvolvimento do Vite e a API roda localmente, ambos apontando para serviços locais ou de homologação. O detalhamento está na seção 16.
 
@@ -105,10 +105,10 @@ Contexto de uso adotado por premissa (Q-21, P-15).
 
 | Assunto | Fonte |
 |---|---|
-| Visual | `design.md` |
+| Visual | `docs/DESIGN.md` |
 | Regras de negócio | esta spec, seção 8 |
 | Contrato de API | esta spec, seção 13 e OpenAPI gerado pelo NestJS |
-| Decisões e premissas | `decisions.md` |
+| Decisões e premissas | `docs/decisions.md` |
 | Fatia 1 já desenhada | `docs/superpowers/specs/2026-11-10-autoescola-destak-design.md` — recorte derivado; em divergência, prevalece este documento |
 | Regulatório | seção 19.2 |
 
@@ -1543,7 +1543,7 @@ Coletar apenas o necessário (Q-11). Páginas de política de privacidade e term
 
 | Componente | Onde roda | Observação |
 |---|---|---|
-| Frontend (Vite) | Cloudflare Pages | estático, com pré-renderização das rotas públicas |
+| Frontend (Vite) | **Cloudflare Workers com static assets** | estático, com pré-renderização das rotas públicas; configuração no `wrangler.jsonc` (D-17) |
 | API NestJS | **Railway**, como serviço Node/Docker | Cloudflare Pages não executa servidor Node dedicado (D-01 aprovada, Q-13) |
 | PostgreSQL | Supabase | pooler para a aplicação, conexão direta para migrations |
 | Redis | **Railway** | filas, limite de requisições, cache opcional (D-05, Q-13) |
@@ -1586,7 +1586,7 @@ Coletar apenas o necessário (Q-11). Páginas de política de privacidade e term
 
 ### 16.4 Deploy e rollback
 
-- Frontend: build no Cloudflare Pages; fallback de SPA configurado; rollback por redeploy de deploy anterior.
+- Frontend: build `pnpm --filter @destak/web build`; deploy do Worker com static assets a partir de `apps/web/dist`; fallback de SPA pelo `not_found_handling` do `wrangler.jsonc`; rollback por redeploy de versão anterior.
 - API: container versionado; migrations em etapa separada, antes da subida; rollback pela versão anterior da imagem.
 - Migrations aditivas e compatíveis com a versão anterior, para permitir rollback de código sem rollback de dados.
 - Janela de deploy sem derrubar sessão em andamento.
@@ -1732,7 +1732,7 @@ A implementação deve conferir a norma vigente antes de exibir qualquer exigên
 
 | ID | Decisão | Situação | Motivo | Alternativa | Impacto |
 |---|---|---|---|---|---|
-| D-01 | API em serviço Node/Docker na Railway, fora do Cloudflare Pages | **Aprovada em 2026-11-10** (Q-13) | Pages serve estático e funções, não mantém NestJS | Workers com outro framework (muda a stack) | seção 16 |
+| D-01 | API em serviço Node/Docker na Railway, fora do Cloudflare | **Aprovada em 2026-11-10** (Q-13) | o Cloudflare serve estático, não mantém NestJS | Workers com outro framework (muda a stack) | seção 16 |
 | D-02 | Autenticação no NestJS; Supabase só como banco | **Aprovada em 2026-11-10** | controle de sessão, autorização e auditoria no mesmo lugar | Supabase Auth (descartada) | seção 15 |
 | D-03 | Sessão em cookie + token curto com rotação; Argon2id | Pendente | reduz risco de XSS e de senha vazada | JWT em `localStorage` | FR-007 |
 | D-04 | Zod compartilhado, React Hook Form e TanStack Query | **Aprovada em 2026-11-10** | validação única e cache de servidor | formulários manuais | FR-005 |
@@ -1748,6 +1748,7 @@ A implementação deve conferir a norma vigente antes de exibir qualquer exigên
 | D-14 | Monitoramento de erros com ferramenta externa | Pendente | detectar falha antes do aluno | só logs | NFR-012 |
 | D-15 | `America/Sao_Paulo` na exibição, UTC no banco | Pendente | evita erro de horário de aula | UTC na tela | BR-015 |
 | D-16 | Evolution API no modo QR Code (conexão não oficial), com número exclusivo e monitoramento | **Aprovada em 2026-11-10** (Q-12) | custo baixo e sem verificação de conta comercial | Cloud API oficial, que exige conta verificada e modelos aprovados | FR-025, BR-031, §19 |
+| D-17 | Frontend em **Cloudflare Worker com static assets**, em vez de Pages | **Aprovada em 2026-11-10** | o projeto foi criado como Worker, que é para onde o Pages está migrando; para uma SPA estática o resultado é equivalente | Pages, com fallback via `_redirects` | §16.1, §16.4, FR-026 |
 
 Com D-01 e D-02 aprovadas, a API roda na Railway e concentra cadastro, sessão, autorização por perfil e por dono e auditoria; o Supabase não emite token, não guarda sessão e não autentica ninguém, e sua chave de serviço só é usada para armazenamento de imagens. D-10 fica dispensada porque não existe e-mail de recuperação.
 
@@ -1764,3 +1765,4 @@ Com D-01 e D-02 aprovadas, a API roda na Railway e concentra cadastro, sessão, 
 | 0.3.1 | 2026-11-10 | Q-03 confirmada: taxa absorvida pela escola como regra fixa, alternativa de repasse descartada. Q-12 respondida: Evolution API no modo **QR Code** (não oficial), com número exclusivo obrigatório (BR-031), situação da conexão no painel (EP-61) e alerta de queda; risco de banimento promovido e mitigado na §19; D-16 aprovada. |
 | 0.3.2 | 2026-11-10 | D-04, D-11 e D-13 aprovadas para destravar a fase 0. Implementação da fundação criada: monorepo pnpm, `packages/shared` com Zod, API NestJS com `/health` fora do prefixo `/api/v1`, web com tokens do `design.md`, Dockerfile de deploy, CI e configuração da Railway. |
 | 0.3.3 | 2026-11-10 | Ambiente de desenvolvimento sem Docker: PostgreSQL 16 nativo na máquina (§16.2) e Redis fora até a fase 5. O Dockerfile é mantido exclusivamente como artefato de deploy (D-01, H-21). |
+| 0.3.4 | 2026-11-10 | Hospedagem do frontend trocada de Cloudflare Pages para **Cloudflare Workers com static assets** (§1.1, §16.1, §16.4), com fallback de SPA pelo `wrangler.jsonc`. D-17 aprovada. |

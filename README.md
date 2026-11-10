@@ -1,8 +1,8 @@
 # Autoescola Destak
 
 Monorepo do site e do painel da Autoescola Destak.
-A fonte da verdade é a [`spec.md`](spec.md) (versão 0.3.1); decisões e premissas ficam em
-[`decisions.md`](decisions.md); o visual segue o [`design.md`](DESIGN.md).
+A fonte da verdade é a [`spec.md`](docs/spec.md) (versão 0.3.4); decisões e premissas ficam em
+[`decisions.md`](docs/decisions.md); o visual segue o [`DESIGN.md`](docs/DESIGN.md).
 
 > **Estado atual:** fase 0 (fundação). Existe apenas uma tela provisória e um endpoint `/health`.
 > Nenhuma funcionalidade de negócio foi implementada.
@@ -108,18 +108,26 @@ que migration escrita aqui se comporte igual em produção.
 
 ## Deploy
 
-- **Web:** Cloudflare Pages. Build `pnpm --filter web build`, saída `apps/web/dist`. O fallback da SPA
-  está em `apps/web/public/_redirects` e os cabeçalhos de segurança em `apps/web/public/_headers`.
+- **Web:** Cloudflare, como projeto Worker com static assets — `wrangler.jsonc` na raiz aponta para
+  `apps/web/dist` com fallback de SPA. Se for usado Cloudflare Pages, o mesmo comportamento vem de
+  `apps/web/public/_redirects`. Cabeçalhos de segurança em `apps/web/public/_headers`.
 - **API:** Railway, via `apps/api/Dockerfile` e [`railway.json`](railway.json).
 
-O passo a passo está em [`docs/ops/railway-setup.md`](docs/ops/railway-setup.md).
+Comando de build do web (não use o build da raiz, que também compila a API):
+
+```bash
+pnpm --filter @destak/web build
+```
+
+O passo a passo da API está em [`docs/ops/railway-setup.md`](docs/ops/railway-setup.md).
 
 ## Documentos
 
 | Arquivo | Conteúdo |
 |---|---|
-| [`spec.md`](spec.md) | requisitos, regras, modelo de dados, API, NFRs |
-| [`decisions.md`](decisions.md) | respostas do dono, decisões técnicas, premissas, histórico |
-| [`DESIGN.md`](DESIGN.md) | referência visual e tokens |
+| [`docs/spec.md`](docs/spec.md) | requisitos, regras, modelo de dados, API, NFRs |
+| [`docs/decisions.md`](docs/decisions.md) | respostas do dono, decisões técnicas, premissas, histórico |
+| [`docs/DESIGN.md`](docs/DESIGN.md) | referência visual e tokens |
 | [`docs/superpowers/plans/`](docs/superpowers/plans) | planos por fase |
 | [`docs/ops/`](docs/ops) | runbooks de operação |
+| [`docs/mockups/`](docs/mockups) | protótipos navegáveis da landing e do admin |

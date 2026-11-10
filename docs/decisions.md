@@ -5,9 +5,9 @@ Ordem de prioridade em conflito: `spec.md` §4.2.
 
 | Campo | Valor |
 |---|---|
-| Versão | 1.3.0 |
+| Versão | 1.4.0 |
 | Data | 2026-11-10 |
-| Referência | `spec.md` 0.3.3 |
+| Referência | `docs/spec.md` 0.3.4 |
 | Aprovador | dono da Autoescola Destak |
 
 ## Como este arquivo se organiza
@@ -77,6 +77,7 @@ Estas deixaram de ser premissa e passaram a regra na spec.
 | D-14 | Monitoramento de erros com ferramenta externa | Pendente | — | Ferramenta a definir (Q-26) |
 | D-15 | `America/Sao_Paulo` na exibição, UTC no banco | Pendente | — | Alternativa: UTC na tela |
 | D-16 | Evolution API no modo QR Code (não oficial), com número exclusivo e monitoramento | **Aprovada** | 2026-11-10 | Q-12. Risco aceito: banimento do número. Mitigação: número exclusivo (BR-031), volume baixo, alerta de conexão (EP-61) e caminho de migração para Cloud API |
+| D-17 | Frontend em Cloudflare Worker com static assets, em vez de Pages | **Aprovada** | 2026-11-10 | O projeto foi criado como Worker no painel do Cloudflare, que é para onde o Pages está migrando. Para uma SPA estática o resultado é equivalente: mesma entrega de arquivos, mesmo cache de borda. Motivo operacional: o deploy por `wrangler deploy` já existe e o fallback de SPA fica no `not_found_handling` do `wrangler.jsonc`, em vez de depender de `_redirects`. Alternativa mantida em `apps/web/public/_redirects` caso se volte para Pages |
 
 **Nota de ambiente (2026-11-10):** o banco de desenvolvimento passou a ser o **PostgreSQL 16 nativo** na máquina, sem Docker, e o Redis saiu do ambiente até a fase 5, porque nada o consome antes das filas de notificação. O Dockerfile da API **permanece**: ele é o artefato de deploy da Railway e da futura VPS (D-01, H-21). Docker para desenvolvimento e Docker para deploy são decisões separadas — a primeira caiu, a segunda ficou.
 
@@ -155,5 +156,6 @@ Estas deixaram de ser premissa e passaram a regra na spec.
 | 2026-11-10 | Reconciliado com a spec 0.2.1: séries D, P e H; D-02 aprovada. |
 | 2026-11-10 | Reconciliação com a spec 0.3.0: 24 respostas do dono registradas; D-01 aprovada e D-10 dispensada; P-03 e P-11 superadas; P-09 vigente só quanto ao modo; H-04 e H-28 superadas; H-20 e H-30 incorporadas. Restam Q-17 e Q-25. |
 | 2026-11-10 | Spec 0.3.1: Q-03 confirmada (taxa absorvida, sem repasse) e Q-12 respondida em modo QR Code; D-16 aprovada com risco aceito e número exclusivo obrigatório. Restam Q-17 e Q-25. |
+| 2026-11-10 | Spec 0.3.4: D-17 aprovada — frontend em Cloudflare Worker com static assets. O build do Worker passou a usar `pnpm --filter @destak/web build` (antes rodava o build da raiz, que compilava a API sem necessidade). `_redirects` permanece como plano B para Pages. |
 | 2026-11-10 | Spec 0.3.2: D-04, D-11 e D-13 aprovadas. Fase 0 implementada em arquivos (monorepo, shared, API com `/health`, web com tokens, Docker, CI, `railway.json`); validação depende de execução na máquina do dono, porque a sessão não tem terminal. |
 | 2026-11-10 | Spec 0.3.3: ambiente local sem Docker — PostgreSQL 16 nativo, Redis adiado para a fase 5, Dockerfile mantido só para deploy. `docker-compose.yml` fica como comentário, sem serviços. |
