@@ -1,0 +1,24 @@
+{
+  "name": "@destak/shared",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Tipos e validações compartilhados entre API e frontend",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsc -w -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

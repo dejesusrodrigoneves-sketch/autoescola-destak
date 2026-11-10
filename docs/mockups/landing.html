@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autoescola Destak — Sua CNH começa aqui</title>
+<meta name="description" content="Autoescola Destak: o menor preço da região, aulas com instrutor paciente e acompanhamento até a aprovação.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  /* ---------- topbar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 60;
+    background: var(--clove);
+    border-bottom: 1px dotted var(--gold);
+  }
+  .topbar__inner { display: flex; align-items: center; gap: 22px; height: 76px; }
+  .brand { display: flex; flex-direction: column; line-height: 1; }
+  .brand__name {
+    font-family: var(--font-display); font-weight: 700; font-size: 30px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .brand__sub { font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; opacity: .7; margin-top: 4px; }
+  .nav { display: flex; gap: 4px; margin-left: 18px; }
+  .nav a { font-size: 13px; letter-spacing: .09em; text-transform: uppercase; padding: 9px 14px; border-radius: 9999px; opacity: .88; }
+  .nav a:hover { background: rgba(250,174,51,.1); opacity: 1; }
+  .topbar__actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .burger { display: none; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 74px 0 56px; position: relative; overflow: hidden; }
+  .hero__eyebrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .hero__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+  .hero h1 {
+    margin: 26px 0 0;
+    font-size: clamp(74px, 15.2vw, 195px);
+  }
+  .hero h1 span { display: block; }
+  .hero h1 .outline {
+    -webkit-text-stroke: 2px var(--gold);
+    color: transparent;
+  }
+  .hero__grid {
+    display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr);
+    gap: 40px; align-items: end; margin-top: 34px;
+  }
+  .hero__cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .hero__note { margin-top: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .hero__card { padding: 22px; }
+  .stat-mini { display: flex; align-items: baseline; gap: 10px; }
+  .stat-mini strong { font-family: var(--font-display); font-size: 42px; line-height: 1; }
+  .roadmark {
+    position: absolute; inset: 0; pointer-events: none; opacity: .05;
+    background-image: repeating-linear-gradient(90deg, var(--gold) 0 26px, transparent 26px 74px);
+    background-size: 100% 2px; background-repeat: repeat-y; background-position: 0 40%;
+  }
+
+  /* ---------- selo ---------- */
+  .seal { background: var(--clove); border-top: 1px dotted var(--gold); border-bottom: 1px dotted var(--gold); }
+  .seal__grid { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); gap: 48px; align-items: center; }
+  .seal__stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--cardamom); }
+  .seal__stat { background: var(--clove); padding: 22px; }
+  .seal__stat b { font-family: var(--font-display); font-size: 46px; line-height: 1; display: block; }
+  .seal__stat span { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+
+  /* ---------- planos ---------- */
+  .plans { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; margin-top: 44px; }
+  .plan { display: flex; flex-direction: column; gap: 16px; padding: 24px 20px; position: relative; }
+  .plan__top { display: flex; align-items: center; justify-content: space-between; }
+  .plan__price { font-family: var(--font-display); font-size: 46px; line-height: .95; letter-spacing: -.01em; }
+  .plan__price small { font-family: var(--font-ui); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .7; display: block; margin-bottom: 6px; }
+  .plan__inst { font-size: 13px; opacity: .85; }
+  .plan ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; font-size: 14px; }
+  .plan li { display: flex; gap: 9px; align-items: flex-start; }
+  .plan li::before { content: "✓"; color: var(--gold); font-weight: 700; }
+  .plan--best { border-color: var(--gold); }
+  .plan__flag { position: absolute; top: -13px; left: 20px; }
+  .plan__spacer { flex: 1; }
+
+  /* ---------- prova social ---------- */
+  .social__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+  .carousel-wrap { position: relative; margin-top: 36px; }
+  .carousel {
+    display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-bottom: 6px; scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .carousel::-webkit-scrollbar { display: none; }
+  .carousel:focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; }
+  .tcard {
+    flex: 0 0 calc((100% - 32px) / 3); scroll-snap-align: start;
+    display: flex; flex-direction: column; overflow: hidden; padding: 0;
+  }
+  .shot { position: relative; aspect-ratio: 4 / 3; background: linear-gradient(140deg, var(--saffron), var(--clove)); overflow: hidden; }
+  .shot svg { width: 100%; height: 100%; }
+  .shot__tag {
+    position: absolute; left: 10px; bottom: 10px; font-size: 9px; letter-spacing: .16em;
+    text-transform: uppercase; background: rgba(40,16,6,.72); padding: 4px 8px; border-radius: 9999px;
+  }
+  .play {
+    position: absolute; inset: 0; display: grid; place-items: center; background: rgba(40,16,6,.28);
+  }
+  .play span {
+    width: 54px; height: 54px; border-radius: 50%; border: 1.5px solid var(--gold);
+    display: grid; place-items: center; font-size: 15px; background: rgba(40,16,6,.35);
+  }
+  .tcard__body { padding: 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .stars { letter-spacing: 2px; font-size: 13px; }
+  .tcard blockquote { margin: 0; font-family: var(--font-display); font-size: 21px; line-height: 1.12; letter-spacing: -.005em; }
+  .tcard__meta { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
+  .carousel-nav { display: flex; align-items: center; gap: 8px; }
+  .cdot { display: flex; gap: 6px; margin-left: 14px; }
+  .cdot button { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--gold); background: transparent; padding: 0; }
+  .cdot button[aria-current="true"] { background: var(--gold); }
+  .iconbtn {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--gold);
+    background: transparent; color: var(--gold); display: grid; place-items: center; font-size: 16px;
+  }
+  .iconbtn:hover { background: rgba(250,174,51,.12); }
+
+  /* ---------- passos ---------- */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--cardamom); margin-top: 40px; }
+  .step { background: var(--rust); padding: 28px 22px; }
+  .step b { font-family: var(--font-display); font-size: 56px; line-height: .9; opacity: .35; display: block; }
+  .step h3 { margin: 12px 0 8px; font-family: var(--font-display); font-size: 24px; text-transform: uppercase; line-height: 1.1; }
+  .step p { font-size: 14px; margin: 0; opacity: .85; }
+
+  /* ---------- faq ---------- */
+  .faq { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); gap: 48px; align-items: start; }
+  .acc { border-top: 1px dotted var(--gold); }
+  .acc__item { border-bottom: 1px dotted var(--gold); }
+  .acc__btn {
+    width: 100%; background: transparent; border: 0; color: var(--gold);
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    padding: 22px 0; text-align: left; font-family: var(--font-display);
+    font-size: 22px; text-transform: uppercase; letter-spacing: -.005em;
+  }
+  .acc__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+  .acc__btn i { font-style: normal; font-size: 20px; transition: transform 160ms ease; }
+  .acc__btn[aria-expanded="true"] i { transform: rotate(45deg); }
+  .acc__panel { display: none; padding: 0 0 24px; font-size: 16px; line-height: 1.55; max-width: 62ch; opacity: .9; }
+  .acc__panel[data-open="true"] { display: block; }
+
+  /* ---------- cta final ---------- */
+  .final { background: var(--clove); border-top: 1px dotted var(--gold); }
+  .final h2 { font-size: clamp(48px, 9vw, 130px); }
+
+  /* ---------- footer ---------- */
+  footer { background: var(--clove); border-top: 1px dotted var(--gold); padding: 56px 0 40px; }
+  .fgrid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
+  .fgrid h4 { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; opacity: .65; margin: 0 0 14px; }
+  .fgrid a, .fgrid p { font-size: 14px; opacity: .9; margin: 0 0 9px; display: block; }
+  .fgrid a:hover { text-decoration: underline; }
+  .flegal { margin-top: 40px; padding-top: 20px; border-top: 1px dotted rgba(250,174,51,.3); display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 12px; opacity: .65; }
+
+  /* ---------- fab ---------- */
+  .fab {
+    position: fixed; right: 24px; bottom: 24px; z-index: 70;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: var(--gold); color: var(--clove); border: 0;
+    display: grid; place-items: center;
+  }
+  .fab:hover { background: #ffc05c; }
+  .fab:focus-visible { outline: 2px solid var(--clove); outline-offset: 3px; }
+
+  /* ---------- checkout ---------- */
+  .sheet-scrim { position: fixed; inset: 0; background: rgba(40,16,6,.85); z-index: 95; display: none; justify-content: flex-end; }
+  .sheet-scrim[data-open="true"] { display: flex; }
+  .sheet {
+    width: 100%; max-width: 560px; background: var(--clove); height: 100%; overflow: auto;
+    border-left: 1px solid var(--cardamom); padding: 28px; display: flex; flex-direction: column; gap: 20px;
+  }
+  .sheet__head { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+  .methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .method {
+    border: 1px solid var(--cardamom); background: transparent; color: var(--gold);
+    border-radius: 12px; padding: 14px; text-align: left; display: flex; flex-direction: column; gap: 4px;
+  }
+  .method b { font-family: var(--font-display); font-size: 16px; letter-spacing: .05em; text-transform: uppercase; }
+  .method small { font-size: 11px; opacity: .7; }
+  .method[aria-pressed="true"] { border-color: var(--gold); background: rgba(250,174,51,.08); }
+  .qr { display: grid; grid-template-columns: 132px 1fr; gap: 18px; align-items: center; }
+  .qr__code {
+    width: 132px; height: 132px; border-radius: 8px; background: #fff; padding: 8px;
+  }
+  .copybox {
+    display: flex; gap: 8px; align-items: center; border: 1px dashed var(--cardamom);
+    border-radius: 9999px; padding: 10px 14px; font-size: 12px;
+  }
+  .copybox code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .status-line { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+  .okmark { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--gold); display: grid; place-items: center; font-size: 24px; }
+
+  @media (max-width: 1100px) {
+    .plans { grid-template-columns: repeat(2, 1fr); }
+    .hero__grid { grid-template-columns: 1fr; gap: 28px; }
+    .seal__grid { grid-template-columns: 1fr; gap: 32px; }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .faq { grid-template-columns: 1fr; gap: 28px; }
+    .tcard { flex: 0 0 calc((100% - 16px) / 2); }
+    .fgrid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 820px) {
+    .nav, .topbar__actions .pill:first-child { display: none; }
+    .burger { display: inline-flex; }
+    .hero { padding: 44px 0 40px; }
+    .hero h1 { font-size: clamp(56px, 17vw, 96px); }
+    .tcard { flex: 0 0 100%; }
+    .plans { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .fgrid { grid-template-columns: 1fr; }
+    .qr { grid-template-columns: 1fr; justify-items: start; }
+    .sheet { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= TOPBAR ================= -->
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="#top" aria-label="Autoescola Destak — início">
+      <span class="brand__name">Destak</span>
+      <span class="brand__sub">Autoescola</span>
+    </a>
+    <nav class="nav" aria-label="Navegação principal">
+      <a href="#planos">Planos</a>
+      <a href="#prova">Prova social</a>
+      <a href="#como">Como funciona</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <div class="topbar__actions">
+      <a class="pill pill--ghost" href="admin.html">Área do aluno</a>
+      <button class="pill pill--fill" data-open-lead>Quero minha CNH</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="roadmark" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow hero__eyebrow"><span class="hero__dot"></span> Autoescola Destak · categorias A, B e AB · matrículas abertas</p>
+
+      <h1 class="display">
+        <span>Sua CNH</span>
+        <span class="outline">começa aqui</span>
+      </h1>
+
+      <div class="hero__grid">
+        <div>
+          <p class="lead">Instrutor paciente, aulas que cabem na sua rotina e acompanhamento até a aprovação. O preço mais baixo da região — sem taxa escondida no meio do caminho.</p>
+          <div class="hero__cta">
+            <button class="pill pill--fill pill--lg" data-open-lead>Quero minha CNH</button>
+            <a class="pill pill--lg" href="#planos">Ver preços</a>
+          </div>
+          <div class="hero__note micro">
+            <span class="badge badge--dark">Resposta em até 10 min</span>
+            <span>Turmas de manhã, tarde e noite</span>
+          </div>
+        </div>
+
+        <div class="card card--deep hero__card">
+          <div class="stat-mini"><strong>4,9</strong><span class="micro">no Google · 312 avaliações</span></div>
+          <hr class="divider" style="margin:16px 0">
+          <div class="stat-mini"><strong>92%</strong><span class="micro">aprovados na primeira tentativa</span></div>
+          <hr class="divider" style="margin:16px 0">
+          <div class="stat-mini"><strong>+1.200</strong><span class="micro">CNHs emitidas desde 2010</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SELO ================= -->
+  <section class="seal section--tight" id="preco">
+    <div class="wrap seal__grid">
+      <div>
+        <span class="badge">Menor preço da região</span>
+        <h2 class="h2" style="margin-top:22px">Preço de verdade,<br>sem pegadinha</h2>
+        <p class="lead" style="margin-top:18px">Não cobramos taxa de matrícula, não empurramos aula extra e não escondemos a taxa do DETRAN. O valor que você vê é o valor que você paga do começo ao fim.</p>
+        <div class="row" style="margin-top:22px">
+          <button class="pill" data-open-lead>Conferir meu plano</button>
+        </div>
+      </div>
+      <div class="seal__stats">
+        <div class="seal__stat"><b>15</b><span>anos de estrada</span></div>
+        <div class="seal__stat"><b>+1.200</b><span>alunos aprovados</span></div>
+        <div class="seal__stat"><b>92%</b><span>aprovação na 1ª</span></div>
+        <div class="seal__stat"><b>0</b><span>taxa escondida</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PLANOS ================= -->
+  <section class="section" id="planos">
+    <div class="wrap">
+      <div class="between" style="align-items:end;flex-wrap:wrap">
+        <div>
+          <p class="eyebrow">Planos</p>
+          <h2 class="h2" style="margin-top:16px">Escolha sua<br>categoria</h2>
+        </div>
+        <p class="lead" style="max-width:34ch;margin:0">Parcelamos em até 12x no cartão. Pix e débito com desconto na hora.</p>
+      </div>
+
+      <div class="plans">
+        <!-- A -->
+        <article class="card plan">
+          <div class="plan__top">
+            <span class="badge badge--dark">Categoria A</span>
+            <span class="micro">Moto</span>
+          </div>
+          <div>
+            <div class="plan__price"><small>A partir de</small>R$ 1.400</div>
+            <p class="plan__inst">ou 12x de R$ 116,67</p>
+          </div>
+          <ul>
+            <li>20 aulas práticas de moto</li>
+            <li>45h de curso teórico</li>
+            <li>Simulado ilimitado</li>
+            <li>Taxas do DETRAN inclusas</li>
+          </ul>
+          <div class="plan__spacer"></div>
+          <button class="pill pill--block" data-plan="A · Moto">Quero esse plano</button>
+        </article>
+
+        <!-- B -->
+        <article class="card plan plan--best">
+          <span class="badge plan__flag">Mais escolhido</span>
+          <div class="plan__top">
+            <span class="badge badge--dark">Categoria B</span>
+            <span class="micro">Carro</span>
+          </div>
+          <div>
+            <div class="plan__price"><small>A partir de</small>R$ 1.900</div>
+            <p class="plan__inst">ou 12x de R$ 158,33</p>
+          </div>
+          <ul>
+            <li>24 aulas práticas de carro</li>
+            <li>45h de curso teórico</li>
+            <li>Simulado ilimitado</li>
+            <li>Taxas do DETRAN inclusas</li>
+            <li>Aula extra de baliza</li>
+          </ul>
+          <div class="plan__spacer"></div>
+          <button class="pill pill--fill pill--block" data-plan="B · Carro">Quero esse plano</button>
+        </article>
+
+        <!-- AB -->
+        <article class="card plan">
+          <div class="plan__top">
+            <span class="badge badge--dark">Categoria AB</span>
+            <span class="micro">Moto + Carro</span>
+          </div>
+          <div>
+            <div class="plan__price"><small>A partir de</small>R$ 3.100</div>
+            <p class="plan__inst">ou 12x de R$ 258,33</p>
+          </div>
+          <ul>
+            <li>Tudo da categoria A e B</li>
+            <li>Um instrutor para as duas</li>
+            <li>Economia de R$ 200 no combo</li>
+            <li>Taxas do DETRAN inclusas</li>
+          </ul>
+          <div class="plan__spacer"></div>
+          <button class="pill pill--block" data-plan="AB · Moto + Carro">Quero esse plano</button>
+        </article>
+
+        <!-- Reforço -->
+        <article class="card plan">
+          <div class="plan__top">
+            <span class="badge badge--dark">Reforço</span>
+            <span class="micro">Aulas avulsas</span>
+          </div>
+          <div>
+            <div class="plan__price"><small>Por aula</small>R$ 90</div>
+            <p class="plan__inst">pacote de 5 por R$ 420</p>
+          </div>
+          <ul>
+            <li>Para quem já tem processo aberto</li>
+            <li>Instrutor à sua escolha</li>
+            <li>Carro ou moto da autoescola</li>
+            <li>Agendamento pelo WhatsApp</li>
+          </ul>
+          <div class="plan__spacer"></div>
+          <button class="pill pill--block" data-plan="Reforço · Aulas avulsas">Quero esse plano</button>
+        </article>
+      </div>
+      <p class="hint" style="margin-top:18px">Valores de demonstração deste protótipo. Os preços reais vêm do painel da autoescola.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= PROVA SOCIAL ================= -->
+  <section class="section" id="prova">
+    <div class="wrap">
+      <div class="social__head">
+        <div>
+          <p class="eyebrow">Prova social</p>
+          <h2 class="h2" style="margin-top:16px">Quem já<br>dirige</h2>
+        </div>
+        <div class="carousel-nav">
+          <button class="iconbtn" id="prev" aria-label="Depoimento anterior">←</button>
+          <button class="iconbtn" id="next" aria-label="Próximo depoimento">→</button>
+          <div class="cdot" id="dots" role="tablist" aria-label="Selecionar depoimento"></div>
+        </div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel" id="carousel" tabindex="0" role="region" aria-roledescription="carrossel" aria-label="Depoimentos de alunos">
+
+          <article class="card tcard">
+            <div class="shot" style="--c1:#9f531b">
+              <svg viewBox="0 0 400 300" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9f531b"/><stop offset="1" stop-color="#402011"/></linearGradient></defs><rect width="400" height="300" fill="url(#g1)"/><circle cx="200" cy="118" r="54" fill="rgba(40,16,6,.5)"/><path d="M96 300c0-58 46-104 104-104s104 46 104 104z" fill="rgba(40,16,6,.5)"/></svg>
+              <span class="shot__tag">Foto do aluno</span>
+            </div>
+            <div class="tcard__body">
+              <span class="stars" aria-label="5 de 5 estrelas">★★★★★</span>
+              <blockquote>“Eu tinha medo de dirigir. O instrutor teve paciência de explicar mil vezes. Passei de primeira.”</blockquote>
+              <div class="tcard__meta"><span>Camila R. · Cat. B</span><span class="badge badge--dark">Aprovada 1ª</span></div>
+            </div>
+          </article>
+
+          <article class="card tcard">
+            <div class="shot">
+              <svg viewBox="0 0 400 300" aria-hidden="true"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#823513"/><stop offset="1" stop-color="#281006"/></linearGradient></defs><rect width="400" height="300" fill="url(#g2)"/><circle cx="200" cy="112" r="50" fill="rgba(40,16,6,.55)"/><path d="M100 300c0-56 45-100 100-100s100 44 100 100z" fill="rgba(40,16,6,.55)"/></svg>
+              <span class="shot__tag">Foto do aluno</span>
+            </div>
+            <div class="tcard__body">
+              <span class="stars" aria-label="5 de 5 estrelas">★★★★★</span>
+              <blockquote>“Comecei sem saber ligar a moto. Em dois meses estava com a CNH A na mão.”</blockquote>
+              <div class="tcard__meta"><span>João P. · Cat. A</span><span class="badge badge--dark">Aprovado 1ª</span></div>
+            </div>
+          </article>
+
+          <article class="card tcard">
+            <div class="shot">
+              <svg viewBox="0 0 400 300" aria-hidden="true"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b86a2a"/><stop offset="1" stop-color="#402011"/></linearGradient></defs><rect width="400" height="300" fill="url(#g3)"/><circle cx="200" cy="120" r="56" fill="rgba(40,16,6,.45)"/><path d="M92 300c0-60 48-108 108-108s108 48 108 108z" fill="rgba(40,16,6,.45)"/></svg>
+              <span class="shot__tag">Foto do aluno</span>
+            </div>
+            <div class="tcard__body">
+              <span class="stars" aria-label="5 de 5 estrelas">★★★★★</span>
+              <blockquote>“Fiz A e B juntas. Economizei tempo e dinheiro, e o mesmo instrutor acompanhou tudo.”</blockquote>
+              <div class="tcard__meta"><span>Fernanda L. · Cat. AB</span><span class="badge badge--dark">Aprovada 1ª</span></div>
+            </div>
+          </article>
+
+          <article class="card tcard">
+            <div class="shot">
+              <svg viewBox="0 0 400 300" aria-hidden="true"><defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6b2e12"/><stop offset="1" stop-color="#281006"/></linearGradient></defs><rect width="400" height="300" fill="url(#g4)"/><circle cx="200" cy="116" r="52" fill="rgba(40,16,6,.5)"/><path d="M98 300c0-58 46-104 102-104s102 46 102 104z" fill="rgba(40,16,6,.5)"/></svg>
+              <div class="play" aria-hidden="true"><span>▶</span></div>
+              <span class="shot__tag">Vídeo · 0:38</span>
+            </div>
+            <div class="tcard__body">
+              <span class="stars" aria-label="5 de 5 estrelas">★★★★★</span>
+              <blockquote>“Reprovei duas vezes em outra autoescola. Aqui me explicaram onde eu errava. Passei.”</blockquote>
+              <div class="tcard__meta"><span>Rafael M. · Cat. B</span><span class="badge badge--dark">Aprovado</span></div>
+            </div>
+          </article>
+
+          <article class="card tcard">
+            <div class="shot">
+              <svg viewBox="0 0 400 300" aria-hidden="true"><defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c07a35"/><stop offset="1" stop-color="#402011"/></linearGradient></defs><rect width="400" height="300" fill="url(#g5)"/><circle cx="200" cy="118" r="52" fill="rgba(40,16,6,.45)"/><path d="M96 300c0-58 46-104 104-104s104 46 104 104z" fill="rgba(40,16,6,.45)"/></svg>
+              <span class="shot__tag">Foto do aluno</span>
+            </div>
+            <div class="tcard__body">
+              <span class="stars" aria-label="5 de 5 estrelas">★★★★★</span>
+              <blockquote>“59 anos e tirei minha CNH. Achava que não era para mim. Era sim.”</blockquote>
+              <div class="tcard__meta"><span>Ivone S. · Cat. B</span><span class="badge badge--dark">Aprovada 1ª</span></div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= COMO FUNCIONA ================= -->
+  <section class="section" id="como">
+    <div class="wrap">
+      <p class="eyebrow">Como funciona</p>
+      <h2 class="h2" style="margin-top:16px">Do zero<br>à CNH</h2>
+
+      <div class="steps">
+        <div class="step">
+          <b>01</b>
+          <h3>Pré-matrícula</h3>
+          <p>Você escolhe o plano e manda seu nome. Leva 2 minutos e a gente te chama no WhatsApp.</p>
+        </div>
+        <div class="step">
+          <b>02</b>
+          <h3>Documentação</h3>
+          <p>A autoescola cuida do processo no DETRAN e te avisa o que levar. Sem fila, sem mistério.</p>
+        </div>
+        <div class="step">
+          <b>03</b>
+          <h3>Aulas</h3>
+          <p>Teóricas online e práticas agendadas no horário que cabe na sua semana.</p>
+        </div>
+        <div class="step">
+          <b>04</b>
+          <h3>Exame</h3>
+          <p>Acompanhamos até o dia da prova — e no resultado também.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= FAQ ================= -->
+  <section class="section" id="duvidas">
+    <div class="wrap faq">
+      <div>
+        <p class="eyebrow">Dúvidas</p>
+        <h2 class="h2" style="margin-top:16px">Perguntas<br>frequentes</h2>
+        <p class="lead" style="margin-top:20px">Não achou o que procurava? Chama no WhatsApp que a gente responde em minutos.</p>
+        <button class="pill" style="margin-top:20px" data-wa>Falar no WhatsApp</button>
+      </div>
+
+      <div class="acc" id="acc">
+        <div class="acc__item">
+          <button class="acc__btn" aria-expanded="true" aria-controls="a1">O preço inclui tudo?<i>+</i></button>
+          <div class="acc__panel" id="a1" data-open="true">Inclui as aulas teóricas, as práticas previstas no plano, o simulado e as taxas do DETRAN. Não cobramos matrícula nem material. O que não está incluso é a taxa de remarcação de exame, se você faltar.</div>
+        </div>
+        <div class="acc__item">
+          <button class="acc__btn" aria-expanded="false" aria-controls="a2">Posso pagar na autoescola?<i>+</i></button>
+          <div class="acc__panel" id="a2">Pode. Pix, débito, crédito em até 12x ou dinheiro no balcão. Também dá para pedir boleto direto com a secretaria.</div>
+        </div>
+        <div class="acc__item">
+          <button class="acc__btn" aria-expanded="false" aria-controls="a3">Não sei dirigir nada. E agora?<i>+</i></button>
+          <div class="acc__panel" id="a3">É exatamente para isso que existimos. A primeira aula prática é no pátio, com o carro parado, explicando cada pedal. Ninguém começa sabendo.</div>
+        </div>
+        <div class="acc__item">
+          <button class="acc__btn" aria-expanded="false" aria-controls="a4">Quanto tempo demora?<i>+</i></button>
+          <div class="acc__panel" id="a4">Em média de 2 a 3 meses, dependendo da sua disponibilidade e da agenda do DETRAN. Quem faz duas aulas por semana costuma concluir mais rápido.</div>
+        </div>
+        <div class="acc__item">
+          <button class="acc__btn" aria-expanded="false" aria-controls="a5">Reprovei no exame. Pago tudo de novo?<i>+</i></button>
+          <div class="acc__panel" id="a5">Não. Você paga apenas a nova taxa do DETRAN e as aulas extras que quiser fazer. A taxa de remarcação é a única cobrança adicional.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA FINAL ================= -->
+  <section class="final section">
+    <div class="wrap center">
+      <p class="eyebrow">Matrículas abertas</p>
+      <h2 class="display" style="margin-top:20px">Quanto antes<br>você começa,<br>antes você dirige</h2>
+      <div class="hero__cta" style="justify-content:center;margin-top:34px">
+        <button class="pill pill--fill pill--lg" data-open-lead>Quero minha CNH</button>
+        <button class="pill pill--lg" data-wa>Falar no WhatsApp</button>
+      </div>
+      <p class="micro" style="margin-top:18px">Sem taxa de matrícula · Parcelamos em 12x · Turmas de manhã, tarde e noite</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <div class="brand" style="margin-bottom:16px">
+          <span class="brand__name">Destak</span>
+          <span class="brand__sub">Autoescola</span>
+        </div>
+        <p style="max-width:32ch">Formando condutores com paciência e preço justo desde 2010.</p>
+      </div>
+      <div>
+        <h4>Endereço</h4>
+        <p>Rua das Acácias, 120 — Centro</p>
+        <p>Sua cidade · CEP 00000-000</p>
+      </div>
+      <div>
+        <h4>Horário</h4>
+        <p>Seg a sex · 8h às 19h</p>
+        <p>Sábado · 8h às 12h</p>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <a href="#" data-wa>(00) 00000-0000</a>
+        <a href="#">contato@destak.com.br</a>
+        <a href="admin.html">Área do aluno</a>
+      </div>
+    </div>
+    <div class="flegal">
+      <span>© 2026 Autoescola Destak · CNPJ 00.000.000/0001-00</span>
+      <span>Protótipo navegável · dados fictícios</span>
+    </div>
+  </div>
+</footer>
+
+<a class="fab" href="#" data-wa aria-label="Falar no WhatsApp" title="Falar no WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/>
+    <path d="M8.5 9.5c.5 2.5 2.5 4.5 5 5l1.2-1.2 2 .8v1.4c-3.5.6-6.9-2.8-7.5-6.3h1.4Z" fill="currentColor" stroke="none"/>
+  </svg>
+</a>
+
+<!-- ================= MODAL LEAD ================= -->
+<div class="scrim" id="leadScrim" role="dialog" aria-modal="true" aria-labelledby="leadTitle">
+  <div class="modal">
+    <div class="between">
+      <div>
+        <p class="eyebrow">Pré-matrícula</p>
+        <h3 class="h3" id="leadTitle" style="margin-top:8px">Comece hoje</h3>
+      </div>
+      <button class="iconbtn" data-close aria-label="Fechar">✕</button>
+    </div>
+    <form id="leadForm" style="display:flex;flex-direction:column;gap:16px;margin-top:22px" novalidate>
+      <div class="field">
+        <label class="label" for="leadName">Nome completo</label>
+        <input class="input" id="leadName" name="name" autocomplete="name" placeholder="Como podemos te chamar">
+        <span class="error-msg" id="leadNameErr" data-show="false">Informe pelo menos 3 letras.</span>
+      </div>
+      <div class="field">
+        <label class="label" for="leadZap">WhatsApp</label>
+        <input class="input" id="leadZap" name="whatsapp" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000">
+        <span class="error-msg" id="leadZapErr" data-show="false">Informe DDD + número.</span>
+      </div>
+      <div class="field">
+        <label class="label" for="leadPlan">Plano de interesse</label>
+        <select class="select" id="leadPlan">
+          <option>A · Moto — R$ 1.400</option>
+          <option selected>B · Carro — R$ 1.900</option>
+          <option>AB · Moto + Carro — R$ 3.100</option>
+          <option>Reforço · Aulas avulsas — R$ 90</option>
+        </select>
+      </div>
+      <button class="pill pill--fill pill--block pill--lg" type="submit" id="leadSubmit">Enviar pré-matrícula</button>
+      <p class="hint center">Ao enviar, você concorda em receber contato pelo WhatsApp.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ================= CHECKOUT ================= -->
+<div class="sheet-scrim" id="sheetScrim" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet">
+    <div class="sheet__head">
+      <div>
+        <p class="eyebrow">Checkout</p>
+        <h3 class="h3" id="sheetTitle" style="margin-top:8px">Fechar matrícula</h3>
+      </div>
+      <button class="iconbtn" data-close-sheet aria-label="Fechar checkout">✕</button>
+    </div>
+
+    <div class="card" style="padding:16px">
+      <div class="between">
+        <span class="micro" id="ckPlan">B · Carro</span>
+        <strong id="ckPrice" style="font-family:var(--font-display);font-size:26px">R$ 1.900</strong>
+      </div>
+      <p class="hint" style="margin:8px 0 0">ou 12x de R$ 158,33 no cartão</p>
+    </div>
+
+    <div class="field">
+      <label class="label" for="ckName">Nome completo *</label>
+      <input class="input" id="ckName" placeholder="Nome que vai no contrato">
+      <span class="error-msg" id="ckNameErr" data-show="false">Informe pelo menos 3 letras.</span>
+    </div>
+    <div class="field">
+      <label class="label" for="ckZap">WhatsApp *</label>
+      <input class="input" id="ckZap" inputmode="tel" placeholder="(00) 00000-0000">
+      <span class="error-msg" id="ckZapErr" data-show="false">Informe DDD + número.</span>
+    </div>
+    <div class="field">
+      <label class="label" for="ckMail">E-mail (opcional)</label>
+      <input class="input" id="ckMail" type="email" placeholder="voce@email.com">
+    </div>
+
+    <div class="field">
+      <span class="label">Forma de pagamento</span>
+      <div class="methods" id="methods">
+        <button class="method" type="button" data-method="PIX" aria-pressed="true"><b>Pix</b><small>aprova na hora</small></button>
+        <button class="method" type="button" data-method="CREDITO" aria-pressed="false"><b>Crédito</b><small>até 12x</small></button>
+        <button class="method" type="button" data-method="DEBITO" aria-pressed="false"><b>Débito</b><small>à vista</small></button>
+        <button class="method" type="button" data-method="PRESENCIAL" aria-pressed="false"><b>Na autoescola</b><small>pagar no balcão</small></button>
+      </div>
+    </div>
+
+    <div id="ckStep1">
+      <button class="pill pill--fill pill--block pill--lg" id="ckGo">Gerar pagamento</button>
+    </div>
+
+    <div id="ckStep2" hidden>
+      <div id="ckPix">
+        <div class="qr">
+          <div class="qr__code">
+            <svg viewBox="0 0 100 100" aria-label="QR Code de demonstração"><rect width="100" height="100" fill="#fff"/><g fill="#281006"><rect x="6" y="6" width="22" height="22"/><rect x="72" y="6" width="22" height="22"/><rect x="6" y="72" width="22" height="22"/><rect x="12" y="12" width="10" height="10" fill="#fff"/><rect x="78" y="12" width="10" height="10" fill="#fff"/><rect x="12" y="78" width="10" height="10" fill="#fff"/><rect x="40" y="10" width="6" height="6"/><rect x="52" y="18" width="6" height="6"/><rect x="38" y="30" width="6" height="6"/><rect x="48" y="40" width="8" height="8"/><rect x="62" y="34" width="6" height="6"/><rect x="34" y="52" width="6" height="6"/><rect x="56" y="54" width="6" height="6"/><rect x="70" y="46" width="6" height="6"/><rect x="42" y="66" width="6" height="6"/><rect x="58" y="70" width="6" height="6"/><rect x="72" y="62" width="8" height="8"/><rect x="20" y="42" width="6" height="6"/><rect x="26" y="56" width="6" height="6"/></g></svg>
+          </div>
+          <div class="stack" style="gap:10px">
+            <div class="copybox"><code id="pixCode">00020126destak0001</code><button class="pill pill--sm" id="copyPix" type="button">Copiar</button></div>
+            <div class="status-line"><span class="pulse"></span> Aguardando confirmação do Pix</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ckCard" hidden>
+        <div class="field" style="margin-bottom:12px">
+          <label class="label" for="cardNum">Número do cartão</label>
+          <input class="input" id="cardNum" inputmode="numeric" placeholder="0000 0000 0000 0000">
+        </div>
+        <div class="row" style="gap:10px">
+          <div class="field grow"><label class="label" for="cardExp">Validade</label><input class="input" id="cardExp" placeholder="MM/AA"></div>
+          <div class="field grow"><label class="label" for="cardCvv">CVV</label><input class="input" id="cardCvv" placeholder="000"></div>
+        </div>
+        <p class="hint" style="margin-top:10px">No produto real, o cartão é tokenizado direto no Asaas — nunca passa pelo nosso servidor.</p>
+      </div>
+
+      <div id="ckPresencial" hidden>
+        <div class="card card--deep">
+          <p style="margin:0 0 8px"><strong>Pague no balcão.</strong></p>
+          <p class="micro" style="margin:0">Guardamos sua pré-matrícula e te chamamos no WhatsApp para combinar o horário. Leve documento com foto.</p>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:18px;gap:10px">
+        <button class="pill pill--fill grow" id="ckConfirm">Simular confirmação</button>
+        <button class="pill" id="ckBack">Voltar</button>
+      </div>
+      <p class="hint" style="margin-top:12px">Este é um protótipo: o botão simula o retorno do webhook do Asaas.</p>
+    </div>
+
+    <div id="ckStep3" hidden>
+      <div class="stack" style="align-items:center;text-align:center;gap:14px;padding:18px 0">
+        <div class="okmark">✓</div>
+        <h3 class="h3" id="okTitle">Pagamento confirmado</h3>
+        <p class="lead" id="okText" style="max-width:36ch">Recebemos seu pagamento. A autoescola já foi avisada no WhatsApp e vai liberar seu acesso.</p>
+        <div class="card card--deep" style="width:100%;text-align:left">
+          <p class="micro" style="margin:0 0 6px" id="okNotifyLabel">Mensagem enviada para a autoescola</p>
+          <p id="okMsg" style="margin:0;font-size:14px"></p>
+        </div>
+        <button class="pill pill--fill" data-close-sheet>Voltar ao site</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ---------- toast ---------- */
+  function toast(msg) {
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(function () { el.remove(); }, 3600);
+  }
+
+  /* ---------- whatsapp (dummy) ---------- */
+  $$('[data-wa]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      toast('Abriria o WhatsApp com mensagem pronta. Número vem do painel admin.');
+    });
+  });
+
+  /* ---------- modal lead ---------- */
+  var leadScrim = $('#leadScrim');
+  var lastFocus = null;
+
+  function openLead() {
+    lastFocus = document.activeElement;
+    leadScrim.dataset.open = 'true';
+    setTimeout(function () { $('#leadName').focus(); }, 30);
+  }
+  function closeLead() {
+    leadScrim.dataset.open = 'false';
+    if (lastFocus) lastFocus.focus();
+  }
+
+  $$('[data-open-lead]').forEach(function (b) { b.addEventListener('click', openLead); });
+  $$('[data-close]').forEach(function (b) { b.addEventListener('click', closeLead); });
+  leadScrim.addEventListener('click', function (e) { if (e.target === leadScrim) closeLead(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeLead();
+      closeSheet();
+    }
+  });
+
+  function showErr(input, errEl, show) {
+    input.setAttribute('aria-invalid', show ? 'true' : 'false');
+    errEl.dataset.show = show ? 'true' : 'false';
+  }
+
+  function digits(v) { return (v || '').replace(/\D/g, ''); }
+
+  $('#leadForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('#leadName');
+    var zap = $('#leadZap');
+    var okName = name.value.trim().length >= 3;
+    var okZap = digits(zap.value).length >= 10;
+    showErr(name, $('#leadNameErr'), !okName);
+    showErr(zap, $('#leadZapErr'), !okZap);
+    if (!okName || !okZap) { (okName ? zap : name).focus(); return; }
+
+    var btn = $('#leadSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    setTimeout(function () {
+      btn.disabled = false;
+      btn.textContent = 'Enviar pré-matrícula';
+      closeLead();
+      toast('Pré-matrícula recebida. Te chamamos no WhatsApp em minutos.');
+      $('#leadForm').reset();
+    }, 700);
+  });
+
+  /* ---------- accordion ---------- */
+  $$('#acc .acc__btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      panel.dataset.open = String(!open);
+    });
+  });
+
+  /* ---------- carrossel ---------- */
+  var track = $('#carousel');
+  var dotsBox = $('#dots');
+  var cards = $$('.tcard', track);
+
+  function step() {
+    if (!cards.length) return 0;
+    var gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 16;
+    return cards[0].getBoundingClientRect().width + gap;
+  }
+  function pageCount() {
+    return Math.max(1, Math.ceil(track.scrollWidth / track.clientWidth));
+  }
+  function buildDots() {
+    dotsBox.innerHTML = '';
+    for (var i = 0; i < pageCount(); i++) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-label', 'Ir para o grupo ' + (i + 1));
+      b.setAttribute('aria-current', i === 0 ? 'true' : 'false');
+      (function (idx) {
+        b.addEventListener('click', function () { track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' }); });
+      })(i);
+      dotsBox.appendChild(b);
+    }
+  }
+  function syncDots() {
+    var idx = Math.round(track.scrollLeft / track.clientWidth);
+    $$('button', dotsBox).forEach(function (b, i) {
+      b.setAttribute('aria-current', i === idx ? 'true' : 'false');
+    });
+  }
+  $('#next').addEventListener('click', function () {
+    var max = track.scrollWidth - track.clientWidth;
+    var target = Math.min(track.scrollLeft + step(), max);
+    track.scrollTo({ left: target, behavior: 'smooth' });
+  });
+  $('#prev').addEventListener('click', function () {
+    track.scrollTo({ left: Math.max(0, track.scrollLeft - step()), behavior: 'smooth' });
+  });
+  track.addEventListener('scroll', function () { window.requestAnimationFrame(syncDots); });
+  track.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); $('#next').click(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); $('#prev').click(); }
+  });
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var autoplay = null;
+  function startAuto() {
+    if (reduce || autoplay) return;
+    autoplay = setInterval(function () {
+      var max = track.scrollWidth - track.clientWidth;
+      if (track.scrollLeft >= max - 4) track.scrollTo({ left: 0, behavior: 'smooth' });
+      else $('#next').click();
+    }, 6000);
+  }
+  function stopAuto() { if (autoplay) { clearInterval(autoplay); autoplay = null; } }
+  track.addEventListener('mouseenter', stopAuto);
+  track.addEventListener('mouseleave', startAuto);
+  track.addEventListener('focusin', stopAuto);
+  track.addEventListener('focusout', startAuto);
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stopAuto(); else startAuto();
+  });
+
+  buildDots();
+  startAuto();
+  window.addEventListener('resize', function () { buildDots(); syncDots(); });
+
+  /* ---------- checkout ---------- */
+  var PRICES = {
+    'A · Moto': { price: 'R$ 1.400', inst: 'ou 12x de R$ 116,67' },
+    'B · Carro': { price: 'R$ 1.900', inst: 'ou 12x de R$ 158,33' },
+    'AB · Moto + Carro': { price: 'R$ 3.100', inst: 'ou 12x de R$ 258,33' },
+    'Reforço · Aulas avulsas': { price: 'R$ 90', inst: 'pacote de 5 por R$ 420' }
+  };
+  var sheet = $('#sheetScrim');
+  var currentPlan = 'B · Carro';
+  var currentMethod = 'PIX';
+
+  function openSheet(plan) {
+    currentPlan = plan || currentPlan;
+    var p = PRICES[currentPlan] || PRICES['B · Carro'];
+    $('#ckPlan').textContent = currentPlan;
+    $('#ckPrice').textContent = p.price;
+    $('#ckStep1').hidden = false;
+    $('#ckStep2').hidden = true;
+    $('#ckStep3').hidden = true;
+    sheet.dataset.open = 'true';
+    setTimeout(function () { $('#ckName').focus(); }, 30);
+  }
+  function closeSheet() { sheet.dataset.open = 'false'; }
+
+  $$('[data-plan]').forEach(function (b) {
+    b.addEventListener('click', function () { openSheet(b.dataset.plan); });
+  });
+  $$('[data-close-sheet]').forEach(function (b) { b.addEventListener('click', closeSheet); });
+  sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+
+  $$('#methods .method').forEach(function (m) {
+    m.addEventListener('click', function () {
+      currentMethod = m.dataset.method;
+      $$('#methods .method').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      m.setAttribute('aria-pressed', 'true');
+    });
+  });
+
+  $('#ckGo').addEventListener('click', function () {
+    var name = $('#ckName');
+    var zap = $('#ckZap');
+    var okName = name.value.trim().length >= 3;
+    var okZap = digits(zap.value).length >= 10;
+    showErr(name, $('#ckNameErr'), !okName);
+    showErr(zap, $('#ckZapErr'), !okZap);
+    if (!okName || !okZap) { (okName ? zap : name).focus(); return; }
+
+    var btn = $('#ckGo');
+    btn.disabled = true;
+    btn.textContent = 'Gerando…';
+    setTimeout(function () {
+      btn.disabled = false;
+      btn.textContent = 'Gerar pagamento';
+      $('#ckStep1').hidden = true;
+      $('#ckStep2').hidden = false;
+      $('#ckPix').hidden = currentMethod !== 'PIX';
+      $('#ckCard').hidden = !(currentMethod === 'CREDITO' || currentMethod === 'DEBITO');
+      $('#ckPresencial').hidden = currentMethod !== 'PRESENCIAL';
+      $('#ckConfirm').textContent = currentMethod === 'PRESENCIAL' ? 'Registrar pré-matrícula' : 'Simular confirmação';
+      $('#pixCode').textContent = '00020126580014BR.GOV.BCB.PIX0136destak-' + Math.random().toString(36).slice(2, 8) + '5204000053039865802BR5909DESTAK6009SAO PAULO62070503***6304';
+    }, 800);
+  });
+
+  $('#ckBack').addEventListener('click', function () {
+    $('#ckStep2').hidden = true;
+    $('#ckStep1').hidden = false;
+  });
+
+  $('#copyPix').addEventListener('click', function () {
+    var code = $('#pixCode').textContent;
+    if (navigator.clipboard) { navigator.clipboard.writeText(code).catch(function () {}); }
+    toast('Código Pix copiado.');
+  });
+
+  $('#ckConfirm').addEventListener('click', function () {
+    var btn = $('#ckConfirm');
+    btn.disabled = true;
+    btn.textContent = 'Processando…';
+    setTimeout(function () {
+      btn.disabled = false;
+      var presencial = currentMethod === 'PRESENCIAL';
+      var nm = $('#ckName').value.trim() || 'Cliente';
+      var valor = (PRICES[currentPlan] || {}).price || '';
+
+      $('#okTitle').textContent = presencial ? 'Pré-matrícula registrada' : 'Pagamento confirmado';
+      $('#okText').textContent = presencial
+        ? 'Guardamos sua pré-matrícula. A autoescola já foi avisada no WhatsApp para combinar o pagamento e o horário.'
+        : 'Recebemos seu pagamento. A autoescola já foi avisada no WhatsApp e vai liberar seu acesso.';
+
+      $('#okMsg').textContent = presencial
+        ? 'Cliente ' + nm + ' fez a pré-matrícula do plano ' + currentPlan + ' (' + valor + ') e vai pagar na autoescola. Protocolo DST-2026-0431.'
+        : 'Cliente ' + nm + ' pagou o plano ' + currentPlan + ' (' + valor + ') via ' +
+          ({ PIX: 'Pix', CREDITO: 'Crédito', DEBITO: 'Débito' }[currentMethod] || currentMethod) +
+          '. Protocolo DST-2026-0431.';
+
+      $('#ckStep2').hidden = true;
+      $('#ckStep3').hidden = false;
+    }, 1100);
+  });
+})();
+</script>
+</body>
+</html>

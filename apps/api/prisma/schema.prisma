@@ -1,0 +1,12 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Nenhum modelo nesta fase. As entidades da secao 12 da spec entram na fase 2,
+// em migrations proprias e aditivas (I-15).

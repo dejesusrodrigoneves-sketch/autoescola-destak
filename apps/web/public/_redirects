@@ -1,0 +1,4 @@
+# Fallback da SPA no Cloudflare Pages.
+# Qualquer rota que nao exista como arquivo cai no index.html e o React Router resolve.
+# Sem isto, abrir /admin direto no navegador daria 404 do Pages.
+/* /index.html 200

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Destak · Protótipos navegáveis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  .hub { max-width: 1040px; margin: 0 auto; padding: 64px 24px 80px; }
+  .hub h1 { font-size: clamp(52px, 9vw, 108px); margin: 0; }
+  .hub__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 44px; }
+  .hub__card { padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+  .hub__card h2 { font-family: var(--font-display); font-size: 34px; text-transform: uppercase; margin: 0; line-height: 1; }
+  .hub__card p { margin: 0; font-size: 15px; line-height: 1.55; opacity: .9; }
+  .hub__card ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.7; opacity: .85; }
+  .notes { margin-top: 40px; }
+  .notes table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .notes th { text-align: left; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .6; padding: 12px 14px; border-bottom: 1px dotted rgba(250,174,51,.3); }
+  .notes td { padding: 13px 14px; border-bottom: 1px dotted rgba(250,174,51,.15); vertical-align: top; }
+  @media (max-width: 780px) { .hub__cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="hub">
+  <p class="eyebrow">Protótipo · 2026-11-10</p>
+  <h1 class="display">Destak<br>mockups</h1>
+  <p class="lead" style="margin-top:22px">Duas telas navegáveis, sem build e sem servidor: abra os arquivos direto no navegador. Tudo aqui é dado fictício, para validar decisão visual e fluxo antes de escrever código.</p>
+
+  <div class="hub__cards">
+    <a class="card hub__card" href="landing.html">
+      <span class="badge">Landing</span>
+      <h2>Página que vende</h2>
+      <p>Hero poster, selo de menor preço, 4 planos, carrossel de prova social com foto e vídeo, como funciona, dúvidas e CTA.</p>
+      <ul>
+        <li>Carrossel com setas, dots, arrasto e teclado</li>
+        <li>Modal de pré-matrícula com validação</li>
+        <li>Checkout com Pix, crédito, débito e "pagar na autoescola"</li>
+        <li>Simulação do aviso de pagamento no WhatsApp da escola</li>
+      </ul>
+      <span class="pill pill--fill" style="align-self:flex-start;margin-top:6px">Abrir landing →</span>
+    </a>
+
+    <a class="card hub__card" href="admin.html">
+      <span class="badge badge--dark">Painel admin</span>
+      <h2>Operação</h2>
+      <p>Visão geral, fila de leads, pagamentos, planos, prova social e configurações da escola.</p>
+      <ul>
+        <li>Liberar acesso a partir de um lead, com link de uso único</li>
+        <li>Gerar boleto e marcar recebimento em dinheiro</li>
+        <li>Ver e reenviar o aviso de WhatsApp</li>
+        <li>Editar preço, destaque e publicação</li>
+      </ul>
+      <span class="pill pill--fill" style="align-self:flex-start;margin-top:6px">Abrir painel →</span>
+    </a>
+  </div>
+
+  <div class="notes">
+    <h2 class="h3" style="margin-bottom:14px">O que é real e o que é maquete</h2>
+    <table>
+      <thead><tr><th>Área</th><th>No protótipo</th><th>No produto</th></tr></thead>
+      <tbody>
+        <tr><td>Preços e planos</td><td>fixos no HTML/JS</td><td>vindos do banco, editáveis no admin</td></tr>
+        <tr><td>Fotos de prova social</td><td>silhuetas vetoriais</td><td>upload real no Supabase Storage</td></tr>
+        <tr><td>Pix / cartão</td><td>QR e campos simulados</td><td>Asaas, cartão tokenizado no browser</td></tr>
+        <tr><td>Aviso de WhatsApp</td><td>mensagem exibida na tela</td><td>Evolution API / fila de notificação</td></tr>
+        <tr><td>Login</td><td>não implementado aqui</td><td>JWT 15 min + refresh rotativo</td></tr>
+        <tr><td>Dados</td><td>memória do navegador</td><td>Postgres (Supabase)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="hint" style="margin-top:28px">Tipografia: Antonio (display) e Inter (UI) — substitutos do Salmond/Graphikx indicados no DESIGN.md.</p>
+</div>
+</body>
+</html>

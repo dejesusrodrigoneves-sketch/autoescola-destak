@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/*
+  Tokens do design.md (tema "Hungry Tiger"), convertidos em tema do Tailwind.
+  Regra da spec (11.2): nenhum componente escreve cor literal.
+  Trocar a paleta = editar este arquivo.
+*/
+@theme {
+  --color-gold: #faae33;
+  --color-rust: #823513;
+  --color-saffron: #9f531b;
+  --color-spice: #402011;
+  --color-clove: #281006;
+  --color-cardamom: #6b2e12;
+  --color-chili: #d1255c;
+
+  --font-display: "Antonio", ui-sans-serif, system-ui, sans-serif;
+  --font-ui: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 6px;
+  --radius-pill: 9999px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-rust);
+  color: var(--color-gold);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Foco sempre visivel (spec, 11.4). */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

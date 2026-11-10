@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Destak · Painel administrativo (protótipo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  body { display: flex; min-height: 100vh; }
+
+  /* ---------- sidebar ---------- */
+  .side {
+    width: 248px; flex: 0 0 248px; background: var(--clove);
+    border-right: 1px dotted var(--gold); padding: 22px 16px;
+    display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh;
+  }
+  .side .brand__name { font-size: 26px; }
+  .side__tag {
+    margin: 18px 0 6px; font-size: 10px; letter-spacing: .18em;
+    text-transform: uppercase; opacity: .55;
+  }
+  .side a {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 11px 14px; border-radius: 9999px; font-size: 13px;
+    letter-spacing: .04em; text-transform: uppercase; opacity: .8;
+  }
+  .side a:hover { background: rgba(250,174,51,.09); opacity: 1; }
+  .side a[aria-current="page"] { background: var(--gold); color: var(--clove); opacity: 1; font-weight: 600; }
+  .side a b { font-size: 11px; background: var(--chili); color: #fff; border-radius: 9999px; padding: 2px 8px; }
+  .side a[aria-current="page"] b { background: var(--clove); color: var(--gold); }
+  .side__foot { margin-top: auto; padding-top: 16px; border-top: 1px dotted rgba(250,174,51,.3); font-size: 12px; opacity: .7; }
+
+  /* ---------- main ---------- */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar {
+    display: flex; align-items: center; gap: 16px; padding: 16px 28px;
+    border-bottom: 1px dotted var(--gold); background: var(--rust);
+    position: sticky; top: 0; z-index: 20;
+  }
+  .topbar h1 { font-family: var(--font-display); font-size: 26px; text-transform: uppercase; letter-spacing: .02em; margin: 0; }
+  .topbar .who { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: var(--clove); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .view { padding: 28px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* ---------- blocos ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .kpi { padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .kpi span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .kpi b { font-family: var(--font-display); font-size: 34px; line-height: 1; }
+  .kpi small { font-size: 12px; opacity: .65; }
+
+  .panel { padding: 0; overflow: hidden; }
+  .panel__head { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px dotted rgba(250,174,51,.25); flex-wrap: wrap; }
+  .panel__head h2 { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: .03em; margin: 0; }
+  .panel__head .grow { margin-left: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    opacity: .6; padding: 12px 20px; border-bottom: 1px dotted rgba(250,174,51,.25);
+    background: rgba(40,16,6,.35); font-weight: 600; white-space: nowrap;
+  }
+  td { padding: 14px 20px; border-bottom: 1px dotted rgba(250,174,51,.15); vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: rgba(250,174,51,.04); }
+  td .sub { display: block; font-size: 11px; opacity: .6; margin-top: 3px; }
+  .ta-r { text-align: right; }
+  .nowrap { white-space: nowrap; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
+    letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border-radius: 9999px;
+    border: 1px solid var(--cardamom); color: var(--gold); opacity: .95;
+  }
+  .chip--ok { background: var(--gold); color: var(--clove); border-color: var(--gold); }
+  .chip--warn { background: var(--chili); color: #fff; border-color: var(--chili); }
+  .chip--mute { opacity: .55; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .search { min-width: 220px; }
+
+  .empty { padding: 44px 20px; text-align: center; opacity: .75; }
+
+  /* ---------- grid de planos / prova ---------- */
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .plan-edit { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .plan-edit .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .plan-edit .price { display: flex; align-items: center; gap: 8px; }
+  .plan-edit input.pill { font-family: var(--font-display); font-size: 20px; padding: 8px 16px; width: 130px; text-align: right; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; user-select: none; }
+  .toggle input { appearance: none; width: 38px; height: 21px; border-radius: 9999px; background: var(--cardamom); position: relative; cursor: pointer; transition: background 140ms; }
+  .toggle input:checked { background: var(--gold); }
+  .toggle input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px; border-radius: 50%; background: var(--clove); transition: transform 140ms; }
+  .toggle input:checked::after { transform: translateX(17px); }
+
+  .proof-item { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .proof-thumb { aspect-ratio: 16/10; position: relative; background: linear-gradient(140deg, var(--saffron), var(--clove)); display: grid; place-items: center; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .9; }
+  .proof-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+  .proof-body q { font-family: var(--font-display); font-size: 16px; line-height: 1.15; }
+
+  /* ---------- settings ---------- */
+  .settings { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; align-items: start; }
+  .settings .card { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .preview { background: var(--clove); border: 1px solid var(--cardamom); border-radius: 12px; padding: 16px; font-size: 13px; line-height: 1.5; }
+  .preview b { color: var(--gold); }
+
+  /* ---------- modal ---------- */
+  .modal .kv { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 9px 0; border-bottom: 1px dotted rgba(250,174,51,.2); }
+  .linkbox { display: flex; gap: 8px; align-items: center; border: 1px dashed var(--cardamom); border-radius: 9999px; padding: 10px 14px; font-size: 12px; }
+  .linkbox code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  @media (max-width: 1100px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .settings { grid-template-columns: 1fr; }
+    .grid3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 860px) {
+    body { flex-direction: column; }
+    .side { width: 100%; flex: none; height: auto; position: static; flex-direction: row; overflow-x: auto; align-items: center; }
+    .side .brand, .side__tag, .side__foot { display: none; }
+    .side a { white-space: nowrap; }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .view { padding: 16px; }
+    .topbar { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="side">
+  <div class="brand">
+    <span class="brand__name">Destak</span>
+    <span class="brand__sub">Painel</span>
+  </div>
+  <div class="side__tag">Operação</div>
+  <a href="#" data-view="overview" aria-current="page">Visão geral</a>
+  <a href="#" data-view="leads">Leads <b id="badgeLeads">2</b></a>
+  <a href="#" data-view="payments">Pagamentos <b id="badgePay">2</b></a>
+  <div class="side__tag">Conteúdo</div>
+  <a href="#" data-view="plans">Planos</a>
+  <a href="#" data-view="proof">Prova social</a>
+  <a href="#" data-view="settings">Configurações</a>
+  <div class="side__foot">
+    <a href="landing.html" style="padding:0;opacity:1">← Ver site</a>
+  </div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+  <header class="topbar">
+    <h1 id="pageTitle">Visão geral</h1>
+    <div class="who">
+      <span class="micro">admin@destak.com.br</span>
+      <span class="avatar" aria-hidden="true">AD</span>
+    </div>
+  </header>
+
+  <main class="view" id="view"></main>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div class="scrim" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
+
+  /* ================= estado ================= */
+  var state = {
+    leads: [
+      { id: 1, n: 'Camila Ribeiro', z: '(11) 98888-1122', plan: 'B · Carro', date: '10/11 · 09:12', status: 'novo' },
+      { id: 2, n: 'João Pedro Alves', z: '(11) 97777-3344', plan: 'A · Moto', date: '10/11 · 08:40', status: 'novo' },
+      { id: 3, n: 'Fernanda Lima', z: '(11) 96666-5566', plan: 'AB · Moto + Carro', date: '09/11 · 17:03', status: 'contatado' },
+      { id: 4, n: 'Rafael Moraes', z: '(11) 95555-7788', plan: 'B · Carro', date: '09/11 · 11:22', status: 'convertido' },
+      { id: 5, n: 'Ivone Souza', z: '(11) 94444-9900', plan: 'Reforço · Aulas avulsas', date: '08/11 · 15:45', status: 'convertido' }
+    ],
+    orders: [
+      { id: 'DST-2026-0431', buyer: 'Camila Ribeiro', plan: 'B · Carro', method: 'PIX', value: 'R$ 1.900', status: 'pago', date: '10/11 · 09:20' },
+      { id: 'DST-2026-0430', buyer: 'Rafael Moraes', plan: 'B · Carro', method: 'BOLETO', value: 'R$ 1.900', status: 'pendente', date: '09/11 · 11:30' },
+      { id: 'DST-2026-0429', buyer: 'Fernanda Lima', plan: 'AB · Moto + Carro', method: 'CREDITO', value: 'R$ 3.100', status: 'pago', date: '09/11 · 17:10' },
+      { id: 'DST-2026-0428', buyer: 'Ivone Souza', plan: 'Reforço · Aulas avulsas', method: 'DINHEIRO', value: 'R$ 420', status: 'pago', date: '08/11 · 16:00' },
+      { id: 'DST-2026-0427', buyer: 'João Pedro Alves', plan: 'A · Moto', method: 'PRESENCIAL', value: 'R$ 1.400', status: 'pendente', date: '10/11 · 08:50' }
+    ],
+    plans: [
+      { id: 'a', name: 'A · Moto', cat: 'A', price: '1.400', inst: 12, destaque: false, ativo: true },
+      { id: 'b', name: 'B · Carro', cat: 'B', price: '1.900', inst: 12, destaque: true, ativo: true },
+      { id: 'ab', name: 'AB · Moto + Carro', cat: 'AB', price: '3.100', inst: 12, destaque: false, ativo: true },
+      { id: 'r', name: 'Reforço · Aulas avulsas', cat: 'REFRECO', price: '90', inst: 1, destaque: false, ativo: true }
+    ],
+    proof: [
+      { id: 1, name: 'Camila R.', cat: 'B', type: 'FOTO', pub: true, quote: 'Eu tinha medo de dirigir. O instrutor teve paciência.' },
+      { id: 2, name: 'João P.', cat: 'A', type: 'FOTO', pub: true, quote: 'Comecei sem saber ligar a moto.' },
+      { id: 3, name: 'Fernanda L.', cat: 'AB', type: 'FOTO', pub: true, quote: 'Fiz A e B juntas e economizei.' },
+      { id: 4, name: 'Rafael M.', cat: 'B', type: 'VIDEO', pub: true, quote: 'Reprovei duas vezes em outra autoescola.' },
+      { id: 5, name: 'Ivone S.', cat: 'B', type: 'FOTO', pub: false, quote: '59 anos e tirei minha CNH.' }
+    ],
+    settings: {
+      whatsapp: '(11) 91234-5678',
+      template: 'Cliente {{nome}} pagou o plano {{plano}} ({{valor}}) via {{forma}}. Protocolo {{protocolo}}.',
+      sealEnabled: true,
+      sealText: 'MENOR PREÇO DA REGIÃO',
+      sealNote: 'Nosso valor é o mais baixo da região em todas as categorias, sem taxa de matrícula e sem aula extra obrigatória.',
+      allowManual: true,
+      payAtSchool: true
+    },
+    notifications: [
+      { id: 1, to: '(11) 91234-5678', body: 'Cliente Camila Ribeiro pagou o plano B · Carro (R$ 1.900) via PIX. Protocolo DST-2026-0431.', status: 'ENVIADA', at: '10/11 · 09:21' },
+      { id: 2, to: '(11) 91234-5678', body: 'Cliente Fernanda Lima pagou o plano AB · Moto + Carro (R$ 3.100) via CREDITO. Protocolo DST-2026-0429.', status: 'ENVIADA', at: '09/11 · 17:11' },
+      { id: 3, to: '(11) 90000-0000', body: 'Cliente Ivone Souza pagou o plano Reforço (R$ 420) via DINHEIRO. Protocolo DST-2026-0428.', status: 'FALHOU', at: '08/11 · 16:01' }
+    ],
+    view: 'overview',
+    leadFilter: 'todos'
+  };
+
+  var TITLES = { overview: 'Visão geral', leads: 'Leads', payments: 'Pagamentos', plans: 'Planos', proof: 'Prova social', settings: 'Configurações' };
+
+  /* ================= utilidades ================= */
+  function toast(msg) {
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(function () { el.remove(); }, 3400);
+  }
+
+  function statusChip(s) {
+    if (s === 'pago' || s === 'convertido' || s === 'ENVIADA') return '<span class="chip chip--ok">' + esc(s) + '</span>';
+    if (s === 'FALHOU') return '<span class="chip chip--warn">falhou</span>';
+    if (s === 'contatado') return '<span class="chip">contatado</span>';
+    return '<span class="chip chip--mute">' + esc(s) + '</span>';
+  }
+
+  function methodLabel(m) {
+    return ({ PIX: 'Pix', CREDITO: 'Crédito', DEBITO: 'Débito', BOLETO: 'Boleto', DINHEIRO: 'Dinheiro', PRESENCIAL: 'Presencial' })[m] || m;
+  }
+
+  function pendingCount() { return state.orders.filter(function (o) { return o.status === 'pendente'; }).length; }
+  function newLeadCount() { return state.leads.filter(function (l) { return l.status === 'novo'; }).length; }
+
+  function money(str) {
+    var clean = String(str).replace(/[^\d,]/g, '').replace(',', '.');
+    return Number(clean) || 0;
+  }
+
+  function renderBadges() {
+    $('#badgeLeads').textContent = newLeadCount();
+    $('#badgePay').textContent = pendingCount();
+  }
+
+  /* ================= views ================= */
+  function viewOverview() {
+    var paid = state.orders.filter(function (o) { return o.status === 'pago'; });
+    var total = paid.reduce(function (acc, o) { return acc + money(o.value); }, 0);
+    var ticket = paid.length ? total / paid.length : 0;
+
+    return '' +
+      '<section class="kpis">' +
+        '<div class="card kpi"><span>Leads hoje</span><b>' + newLeadCount() + '</b><small>aguardando contato</small></div>' +
+        '<div class="card kpi"><span>Pagos</span><b>' + paid.length + '</b><small>R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) + ' no total</small></div>' +
+        '<div class="card kpi"><span>Ticket médio</span><b>R$ ' + ticket.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + '</b><small>por matrícula</small></div>' +
+        '<div class="card kpi"><span>Aguardando acesso</span><b>' + pendingCount() + '</b><small>pagamento ou liberação</small></div>' +
+      '</section>' +
+
+      '<section class="card panel">' +
+        '<div class="panel__head"><h2>Últimos leads</h2><span class="grow"></span>' +
+        '<button class="pill pill--sm" data-view="leads">Ver todos</button></div>' +
+        '<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Plano</th><th>Quando</th><th>Status</th></tr></thead><tbody>' +
+        state.leads.slice(0, 4).map(function (l) {
+          return '<tr><td>' + esc(l.n) + '</td><td class="nowrap">' + esc(l.z) + '</td><td>' + esc(l.plan) + '</td><td class="nowrap">' + esc(l.date) + '</td><td>' + statusChip(l.status) + '</td></tr>';
+        }).join('') +
+        '</tbody></table>' +
+      '</section>' +
+
+      '<section class="card panel">' +
+        '<div class="panel__head"><h2>Últimos avisos de pagamento</h2><span class="grow"></span>' +
+        '<button class="pill pill--sm" data-view="payments">Ir para pagamentos</button></div>' +
+        '<table><thead><tr><th>Mensagem</th><th>Destino</th><th>Quando</th><th>Status</th></tr></thead><tbody>' +
+        state.notifications.slice(0, 3).map(function (n) {
+          return '<tr><td style="max-width:520px">' + esc(n.body) + '</td><td class="nowrap">' + esc(n.to) + '</td><td class="nowrap">' + esc(n.at) + '</td><td>' + statusChip(n.status) + '</td></tr>';
+        }).join('') +
+        '</tbody></table>' +
+      '</section>';
+  }
+
+  function viewLeads() {
+    var list = state.leads.filter(function (l) {
+      if (state.leadFilter === 'todos') return true;
+      if (state.leadFilter === 'novo') return l.status === 'novo';
+      if (state.leadFilter === 'contatado') return l.status === 'contatado';
+      if (state.leadFilter === 'convertido') return l.status === 'convertido';
+      return true;
+    });
+
+    return '' +
+      '<section class="card panel">' +
+        '<div class="panel__head">' +
+          '<h2>Pré-matrículas</h2>' +
+          '<span class="grow"></span>' +
+          '<div class="toolbar">' +
+            '<select class="select" id="leadFilter" style="width:auto;padding:9px 16px">' +
+              ['todos', 'novo', 'contatado', 'convertido'].map(function (f) {
+                return '<option value="' + f + '"' + (state.leadFilter === f ? ' selected' : '') + '>' + f.charAt(0).toUpperCase() + f.slice(1) + '</option>';
+              }).join('') +
+            '</select>' +
+            '<button class="pill pill--sm" data-action="novo-lead">+ Lead manual</button>' +
+          '</div>' +
+        '</div>' +
+        (list.length ?
+          '<table><thead><tr><th>Nome</th><th>WhatsApp</th><th>Plano</th><th>Quando</th><th>Status</th><th class="ta-r">Ação</th></tr></thead><tbody>' +
+          list.map(function (l) {
+            var action = l.status === 'convertido'
+              ? '<span class="micro muted">acesso liberado</span>'
+              : '<button class="pill pill--sm" data-action="converter" data-id="' + l.id + '">Liberar acesso</button>';
+            return '<tr><td>' + esc(l.n) + '</td><td class="nowrap">' + esc(l.z) + '</td><td>' + esc(l.plan) + '</td><td class="nowrap">' + esc(l.date) + '</td><td>' + statusChip(l.status) + '</td><td class="ta-r nowrap">' + action + '</td></tr>';
+          }).join('') +
+          '</tbody></table>'
+          : '<div class="empty">Nenhuma pré-matrícula neste filtro.</div>') +
+      '</section>';
+  }
+
+  function viewPayments() {
+    return '' +
+      '<section class="card panel">' +
+        '<div class="panel__head"><h2>Pedidos</h2><span class="grow"></span>' +
+          '<span class="micro muted">Valores vindos do plano no banco</span></div>' +
+        '<table><thead><tr><th>Protocolo</th><th>Comprador</th><th>Plano</th><th>Forma</th><th>Valor</th><th>Status</th><th class="ta-r">Ações</th></tr></thead><tbody>' +
+        state.orders.map(function (o) {
+          var actions = '';
+          if (o.status === 'pendente') {
+            actions = '<button class="pill pill--sm" data-action="boleto" data-id="' + o.id + '">Gerar boleto</button> ' +
+                      '<button class="pill pill--sm pill--fill" data-action="receber" data-id="' + o.id + '">Marcar recebido</button>';
+          } else {
+            actions = '<button class="pill pill--sm pill--ghost" data-action="reenviar" data-id="' + o.id + '">Reenviar aviso</button>';
+          }
+          return '<tr><td class="nowrap">' + esc(o.id) + '</td><td>' + esc(o.buyer) + '</td><td>' + esc(o.plan) + '</td><td class="nowrap">' + methodLabel(o.method) + '</td><td class="nowrap">' + esc(o.value) + '</td><td>' + statusChip(o.status) + '</td><td class="ta-r nowrap">' + actions + '</td></tr>';
+        }).join('') +
+        '</tbody></table>' +
+      '</section>' +
+
+      '<section class="card panel">' +
+        '<div class="panel__head"><h2>Avisos no WhatsApp da escola</h2><span class="grow"></span>' +
+          '<span class="micro muted">Destino: ' + esc(state.settings.whatsapp) + '</span></div>' +
+        '<table><thead><tr><th>Mensagem</th><th>Destino</th><th>Quando</th><th>Status</th><th class="ta-r">Ação</th></tr></thead><tbody>' +
+        state.notifications.map(function (n) {
+          return '<tr><td style="max-width:480px">' + esc(n.body) + '</td><td class="nowrap">' + esc(n.to) + '</td><td class="nowrap">' + esc(n.at) + '</td><td>' + statusChip(n.status) + '</td>' +
+            '<td class="ta-r"><button class="pill pill--sm pill--ghost" data-action="retry-notif" data-id="' + n.id + '">Reenviar</button></td></tr>';
+        }).join('') +
+        '</tbody></table>' +
+      '</section>';
+  }
+
+  function viewPlans() {
+    return '' +
+      '<section class="card panel">' +
+        '<div class="panel__head"><h2>Planos</h2><span class="grow"></span>' +
+          '<button class="pill pill--sm" data-action="novo-plano">+ Novo plano</button></div>' +
+        '<div style="padding:18px" class="grid2">' +
+        state.plans.map(function (p) {
+          return '<div class="card card--edge plan-edit">' +
+            '<div class="top"><strong style="font-family:var(--font-display);font-size:19px;text-transform:uppercase">' + esc(p.name) + '</strong>' +
+              '<span class="chip' + (p.destaque ? ' chip--ok' : '') + '">' + (p.destaque ? 'destaque' : 'categoria ' + esc(p.cat)) + '</span></div>' +
+            '<div class="price"><span class="micro">R$</span>' +
+              '<input class="pill" value="' + esc(p.price) + '" data-price="' + p.id + '" aria-label="Preço do plano ' + esc(p.name) + '">' +
+              '<span class="micro">em até ' + p.inst + 'x</span></div>' +
+            '<div class="row" style="justify-content:space-between">' +
+              '<label class="toggle"><input type="checkbox" data-destaque="' + p.id + '"' + (p.destaque ? ' checked' : '') + '> destaque</label>' +
+              '<label class="toggle"><input type="checkbox" data-ativo="' + p.id + '"' + (p.ativo ? ' checked' : '') + '> ativo</label>' +
+            '</div>' +
+            '<button class="pill pill--sm pill--fill" data-action="salvar-plano" data-id="' + p.id + '">Salvar</button>' +
+          '</div>';
+        }).join('') +
+        '</div>' +
+      '</section>';
+  }
+
+  function viewProof() {
+    return '' +
+      '<section class="card panel">' +
+        '<div class="panel__head"><h2>Depoimentos</h2><span class="grow"></span>' +
+          '<span class="micro muted">publicados: ' + state.proof.filter(function (p) { return p.pub; }).length + ' / ' + state.proof.length + '</span>' +
+          '<button class="pill pill--sm" data-action="novo-depoimento">+ Novo</button></div>' +
+        '<div style="padding:18px" class="grid3">' +
+        state.proof.map(function (p) {
+          return '<div class="card proof-item">' +
+            '<div class="proof-thumb">' + (p.type === 'VIDEO' ? '▶ vídeo' : 'foto') + '</div>' +
+            '<div class="proof-body">' +
+              '<q>' + esc(p.quote) + '</q>' +
+              '<span class="micro muted">' + esc(p.name) + ' · Cat. ' + esc(p.cat) + '</span>' +
+              '<div class="row" style="justify-content:space-between;margin-top:4px">' +
+                '<label class="toggle"><input type="checkbox" data-pub="' + p.id + '"' + (p.pub ? ' checked' : '') + '> publicado</label>' +
+                '<button class="pill pill--sm pill--ghost" data-action="remover-depoimento" data-id="' + p.id + '">Excluir</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+        '</div>' +
+      '</section>';
+  }
+
+  function viewSettings() {
+    var s = state.settings;
+    return '' +
+      '<section class="settings">' +
+        '<div class="card">' +
+          '<h2 class="h3">WhatsApp da escola</h2>' +
+          '<div class="field"><label class="label" for="sZap">Número que recebe os avisos</label>' +
+            '<input class="input" id="sZap" value="' + esc(s.whatsapp) + '">' +
+            '<span class="hint">É para este número que vai a mensagem quando um pagamento é confirmado.</span></div>' +
+          '<div class="field"><label class="label" for="sTpl">Mensagem</label>' +
+            '<textarea class="textarea" id="sTpl">' + esc(s.template) + '</textarea>' +
+            '<span class="hint">Variáveis: {{nome}} {{plano}} {{valor}} {{forma}} {{protocolo}}</span></div>' +
+          '<button class="pill pill--fill" data-action="salvar-config" style="align-self:flex-start">Salvar</button>' +
+        '</div>' +
+
+        '<div class="card">' +
+          '<h2 class="h3">Prévia da mensagem</h2>' +
+          '<div class="preview" id="tplPreview"></div>' +
+          '<hr class="divider">' +
+          '<label class="toggle"><input type="checkbox" id="sSeal"' + (s.sealEnabled ? ' checked' : '') + '> mostrar selo de preço</label>' +
+          '<div class="field"><label class="label" for="sSealText">Texto do selo</label>' +
+            '<input class="input" id="sSealText" value="' + esc(s.sealText) + '"></div>' +
+          '<div class="field"><label class="label" for="sSealNote">Texto de apoio</label>' +
+            '<input class="input" id="sSealNote" value="' + esc(s.sealNote) + '"></div>' +
+          '<hr class="divider">' +
+          '<label class="toggle"><input type="checkbox" id="sManual"' + (s.allowManual ? ' checked' : '') + '> aceitar boleto e pagamento presencial no checkout</label>' +
+          '<label class="toggle"><input type="checkbox" id="sPayAt"' + (s.payAtSchool ? ' checked' : '') + '> oferecer “pagar na autoescola”</label>' +
+          '<button class="pill" data-action="salvar-config" style="align-self:flex-start">Salvar preferências</button>' +
+        '</div>' +
+      '</section>';
+  }
+
+  var VIEWS = { overview: viewOverview, leads: viewLeads, payments: viewPayments, plans: viewPlans, proof: viewProof, settings: viewSettings };
+
+  function render() {
+    $('#pageTitle').textContent = TITLES[state.view];
+    $('#view').innerHTML = VIEWS[state.view]();
+    $$('.side a').forEach(function (a) {
+      if (a.dataset.view === state.view) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    renderBadges();
+    if (state.view === 'settings') renderPreview();
+  }
+
+  function renderPreview() {
+    var tpl = $('#sTpl') ? $('#sTpl').value : state.settings.template;
+    var out = tpl
+      .replace(/{{nome}}/g, 'Camila Ribeiro')
+      .replace(/{{plano}}/g, 'B · Carro')
+      .replace(/{{valor}}/g, 'R$ 1.900')
+      .replace(/{{forma}}/g, 'Pix')
+      .replace(/{{protocolo}}/g, 'DST-2026-0431');
+    var el = $('#tplPreview');
+    if (el) el.textContent = out;
+  }
+
+  /* ================= modal ================= */
+  function openModal(html) {
+    $('#modalBody').innerHTML = html;
+    $('#modal').dataset.open = 'true';
+  }
+  function closeModal() { $('#modal').dataset.open = 'false'; }
+
+  $('#modal').addEventListener('click', function (e) { if (e.target === $('#modal')) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  function modalConverter(lead) {
+    openModal(
+      '<div class="between"><div><p class="eyebrow">Liberar acesso</p><h3 class="h3" style="margin-top:8px">' + esc(lead.n) + '</h3></div>' +
+      '<button class="iconbtn" data-close aria-label="Fechar">✕</button></div>' +
+      '<div style="margin-top:18px">' +
+        '<div class="kv"><span>WhatsApp</span><b>' + esc(lead.z) + '</b></div>' +
+        '<div class="kv"><span>Plano de interesse</span><b>' + esc(lead.plan) + '</b></div>' +
+        '<div class="field" style="margin-top:16px"><label class="label" for="mMail">E-mail do aluno *</label>' +
+          '<input class="input" id="mMail" placeholder="aluno@email.com" value="' + esc(lead.n.toLowerCase().split(' ')[0]) + '@email.com"></div>' +
+        '<div class="row" style="gap:10px;margin-top:12px">' +
+          '<div class="field grow"><label class="label" for="mPlano">Plano</label>' +
+            '<select class="select" id="mPlano">' + state.plans.map(function (p) { return '<option' + (p.name === lead.plan ? ' selected' : '') + '>' + esc(p.name) + '</option>'; }).join('') + '</select></div>' +
+          '<div class="field grow"><label class="label" for="mCat">Categoria</label>' +
+            '<select class="select" id="mCat"><option>A</option><option selected>B</option><option>AB</option><option>Reforço</option></select></div>' +
+        '</div>' +
+        '<p class="hint" style="margin-top:12px">O sistema cria a conta, gera o link de primeiro acesso (24 h, uso único) e envia pelo WhatsApp.</p>' +
+      '</div>' +
+      '<div class="row" style="margin-top:20px;gap:10px"><button class="pill pill--fill grow" data-action="confirmar-conversao" data-id="' + lead.id + '">Confirmar e gerar acesso</button></div>' +
+      '<div id="convertedBox" hidden style="margin-top:18px">' +
+        '<div class="card card--deep"><p class="micro" style="margin:0 0 8px">Link de primeiro acesso (exibido uma única vez)</p>' +
+        '<div class="linkbox"><code id="accessLink"></code><button class="pill pill--sm" data-action="copiar-link">Copiar</button></div></div>' +
+      '</div>'
+    );
+  }
+
+  /* ================= ações ================= */
+  document.addEventListener('click', function (e) {
+    var nav = e.target.closest('[data-view]');
+    if (nav) { e.preventDefault(); state.view = nav.dataset.view; render(); return; }
+
+    var close = e.target.closest('[data-close]');
+    if (close) { closeModal(); return; }
+
+    var btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    var id = btn.dataset.id;
+
+    if (action === 'converter') {
+      var lead = state.leads.find(function (l) { return String(l.id) === String(id); });
+      if (lead) modalConverter(lead);
+      return;
+    }
+
+    if (action === 'confirmar-conversao') {
+      var l = state.leads.find(function (x) { return String(x.id) === String(id); });
+      if (!l) return;
+      var mail = $('#mMail');
+      if (!mail.value || mail.value.indexOf('@') < 0) { mail.setAttribute('aria-invalid', 'true'); mail.focus(); return; }
+      l.status = 'convertido';
+      var token = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
+      $('#accessLink').textContent = 'https://www.destak.com.br/primeiro-acesso?t=' + token;
+      $('#convertedBox').hidden = false;
+      btn.disabled = true;
+      btn.textContent = 'Acesso gerado';
+      toast('Conta criada e link enviado no WhatsApp.');
+      render();
+      return;
+    }
+
+    if (action === 'copiar-link') {
+      var link = $('#accessLink').textContent;
+      if (navigator.clipboard) navigator.clipboard.writeText(link).catch(function () {});
+      toast('Link copiado.');
+      return;
+    }
+
+    if (action === 'boleto') {
+      var o = state.orders.find(function (x) { return x.id === id; });
+      if (o) { o.method = 'BOLETO'; toast('Boleto gerado. Vencimento em 5 dias úteis.'); render(); }
+      return;
+    }
+
+    if (action === 'receber') {
+      var ord = state.orders.find(function (x) { return x.id === id; });
+      if (ord) {
+        ord.status = 'pago';
+        ord.method = 'DINHEIRO';
+        state.notifications.unshift({
+          id: Date.now(),
+          to: state.settings.whatsapp,
+          body: 'Cliente ' + ord.buyer + ' pagou o plano ' + ord.plan + ' (' + ord.value + ') via DINHEIRO. Protocolo ' + ord.id + '.',
+          status: 'ENVIADA',
+          at: 'agora'
+        });
+        toast('Pedido marcado como recebido. Aviso enviado no WhatsApp.');
+        render();
+      }
+      return;
+    }
+
+    if (action === 'reenviar' || action === 'retry-notif') {
+      toast('Aviso reenviado para o WhatsApp da escola.');
+      if (action === 'retry-notif') {
+        var n = state.notifications.find(function (x) { return String(x.id) === String(id); });
+        if (n) { n.status = 'ENVIADA'; n.to = state.settings.whatsapp; render(); }
+      }
+      return;
+    }
+
+    if (action === 'salvar-plano') {
+      var p = state.plans.find(function (x) { return x.id === id; });
+      if (p) {
+        var input = $('[data-price="' + id + '"]');
+        p.price = input.value.replace(/[^\d,]/g, '');
+        toast('Plano ' + p.name + ' salvo. O site atualiza no próximo carregamento.');
+      }
+      return;
+    }
+
+    if (action === 'novo-plano') {
+      state.plans.push({ id: 'n' + Date.now(), name: 'Novo plano', cat: 'B', price: '0', inst: 1, destaque: false, ativo: false });
+      render();
+      toast('Plano criado como inativo. Edite o preço.');
+      return;
+    }
+
+    if (action === 'novo-depoimento') {
+      state.proof.push({ id: Date.now(), name: 'Novo aluno', cat: 'B', type: 'FOTO', pub: false, quote: 'Escreva o depoimento aqui.' });
+      render();
+      toast('Depoimento criado como não publicado.');
+      return;
+    }
+
+    if (action === 'remover-depoimento') {
+      state.proof = state.proof.filter(function (p) { return String(p.id) !== String(id); });
+      render();
+      toast('Depoimento removido.');
+      return;
+    }
+
+    if (action === 'salvar-config') {
+      var zap = $('#sZap');
+      if (zap) {
+        if (zap.value.replace(/\D/g, '').length < 10) { zap.setAttribute('aria-invalid', 'true'); zap.focus(); toast('WhatsApp inválido.'); return; }
+        state.settings.whatsapp = zap.value;
+      }
+      if ($('#sTpl')) state.settings.template = $('#sTpl').value;
+      if ($('#sSeal')) state.settings.sealEnabled = $('#sSeal').checked;
+      if ($('#sSealText')) state.settings.sealText = $('#sSealText').value;
+      if ($('#sSealNote')) state.settings.sealNote = $('#sSealNote').value;
+      if ($('#sManual')) state.settings.allowManual = $('#sManual').checked;
+      if ($('#sPayAt')) state.settings.payAtSchool = $('#sPayAt').checked;
+      render();
+      toast('Configurações salvas. Valem para o site imediatamente.');
+      return;
+    }
+
+    if (action === 'novo-lead') {
+      openModal(
+        '<div class="between"><div><p class="eyebrow">Lead manual</p><h3 class="h3" style="margin-top:8px">Cadastrar</h3></div>' +
+        '<button class="iconbtn" data-close aria-label="Fechar">✕</button></div>' +
+        '<div class="field" style="margin-top:16px"><label class="label" for="nlName">Nome</label><input class="input" id="nlName"></div>' +
+        '<div class="field" style="margin-top:12px"><label class="label" for="nlZap">WhatsApp</label><input class="input" id="nlZap"></div>' +
+        '<button class="pill pill--fill" style="margin-top:18px" data-action="criar-lead">Criar lead</button>'
+      );
+      return;
+    }
+
+    if (action === 'criar-lead') {
+      var nm = $('#nlName').value.trim();
+      var zp = $('#nlZap').value.trim();
+      if (nm.length < 3 || zp.replace(/\D/g, '').length < 10) { toast('Preencha nome e WhatsApp válidos.'); return; }
+      state.leads.unshift({ id: Date.now(), n: nm, z: zp, plan: 'B · Carro', date: 'agora', status: 'novo' });
+      closeModal();
+      render();
+      toast('Lead criado.');
+      return;
+    }
+  });
+
+  /* ================= eventos de form ================= */
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'leadFilter') { state.leadFilter = t.value; render(); return; }
+    if (t.dataset.pub) {
+      var item = state.proof.find(function (p) { return String(p.id) === t.dataset.pub; });
+      if (item) { item.pub = t.checked; render(); toast(t.checked ? 'Depoimento publicado.' : 'Depoimento despublicado.'); }
+      return;
+    }
+    if (t.dataset.destaque) {
+      state.plans.forEach(function (p) { p.destaque = false; });
+      var pl = state.plans.find(function (p) { return p.id === t.dataset.destaque; });
+      if (pl) pl.destaque = t.checked;
+      render();
+      return;
+    }
+    if (t.dataset.ativo) {
+      var pa = state.plans.find(function (p) { return p.id === t.dataset.ativo; });
+      if (pa) pa.ativo = t.checked;
+      return;
+    }
+  });
+
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'sTpl') renderPreview();
+  });
+
+  /* ================= boot ================= */
+  render();
+})();
+</script>
+</body>
+</html>

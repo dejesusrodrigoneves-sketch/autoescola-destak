@@ -1,0 +1,24 @@
+# Este arquivo nao define servicos.
+#
+# Decisao de 2026-11-10: o Postgres de desenvolvimento passou a ser nativo
+# (instalador do PostgreSQL 16 no Windows), sem Docker, para reduzir dependencia
+# de ambiente. O Redis foi retirado porque nada o consome antes da fase 5.
+#
+# O Dockerfile da API continua existindo: ele e o artefato de deploy da Railway
+# e da futura VPS (D-01, H-21). Docker para deploy e Docker para dev sao coisas
+# diferentes.
+#
+# Quando a fase 5 (notificacoes e filas) chegar, o Redis volta. Opcoes:
+#   - Memurai ou WSL no Windows (o Redis nao tem build oficial para Windows);
+#   - ou reativar o servico abaixo:
+#
+# services:
+#   redis:
+#     image: redis:7-alpine
+#     ports:
+#       - "6379:6379"
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 10
