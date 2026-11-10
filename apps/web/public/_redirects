@@ -1,4 +1,12 @@
-# Fallback da SPA no Cloudflare Pages.
-# Qualquer rota que nao exista como arquivo cai no index.html e o React Router resolve.
-# Sem isto, abrir /admin direto no navegador daria 404 do Pages.
-/* /index.html 200
+# Sem regras.
+#
+# O fallback da SPA neste projeto vem do wrangler.jsonc:
+#   assets.not_found_handling = "single-page-application"
+#
+# Nao adicione "/* /index.html 200" aqui: no Cloudflare Workers essa regra
+# combinada com o not_found_handling gera laco infinito e o deploy falha com
+# "Invalid _redirects configuration".
+#
+# Se o site voltar a ser hospedado no Cloudflare Pages, ai sim a regra padrao
+# de SPA do Pages e:
+#   /* /index.html 200

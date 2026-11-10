@@ -1586,7 +1586,7 @@ Coletar apenas o necessário (Q-11). Páginas de política de privacidade e term
 
 ### 16.4 Deploy e rollback
 
-- Frontend: build `pnpm --filter @destak/web build`; deploy do Worker com static assets a partir de `apps/web/dist`; fallback de SPA pelo `not_found_handling` do `wrangler.jsonc`; rollback por redeploy de versão anterior.
+- Frontend: build `pnpm --filter @destak/web build`; deploy do Worker com static assets a partir de `apps/web/dist`; fallback de SPA pelo `not_found_handling` do `wrangler.jsonc`; **`_redirects` sem regras de SPA**, para não gerar laço; rollback por redeploy de versão anterior.
 - API: container versionado; migrations em etapa separada, antes da subida; rollback pela versão anterior da imagem.
 - Migrations aditivas e compatíveis com a versão anterior, para permitir rollback de código sem rollback de dados.
 - Janela de deploy sem derrubar sessão em andamento.
